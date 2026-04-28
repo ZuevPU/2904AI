@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Части речи — Карточки-задания</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter@5.1.0/400.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter@5.1.0/600.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter@5.1.0/700.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter@5.1.0/800.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            color: #fff;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            text-align: center;
+            background: linear-gradient(90deg, #f7971e, #ffd200);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: rgba(255,255,255,0.55);
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 28px;
+            max-width: 1100px;
+            width: 100%;
+        }
+
+        .card-wrapper {
+            perspective: 1000px;
+            height: 360px;
+            cursor: pointer;
+        }
+
+        .card {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .card-wrapper.flipped .card { transform: rotateY(180deg); }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            padding: 28px 24px;
+            overflow: hidden;
+        }
+
+        .card-front {
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
+            backdrop-filter: blur(12px);
+            justify-content: space-between;
+        }
+
+        .card-front::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 20%, var(--accent-glow), transparent 60%);
+            opacity: 0.25;
+            pointer-events: none;
+        }
+
+        .card-back {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.18);
+            backdrop-filter: blur(12px);
+            transform: rotateY(180deg);
+            justify-content: flex-start;
+            align-items: center;
+            text-align: center;
+            gap: 14px;
+            padding-top: 24px;
+        }
+
+        .card-number {
+            position: absolute;
+            top: 18px;
+            right: 22px;
+            font-size: 3rem;
+            font-weight: 800;
+            color: rgba(255,255,255,0.08);
+            line-height: 1;
+        }
+
+        .card-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 14px;
+            background: var(--accent);
+            box-shadow: 0 4px 18px var(--accent-shadow);
+        }
+
+        .term-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.45); margin-bottom: 4px; }
+        .term { font-size: 1.5rem; font-weight: 700; margin-bottom: 12px; line-height: 1.2; }
+        .example-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.45); margin-bottom: 4px; }
+        .example { font-size: 1rem; color: rgba(255,255,255,0.8); line-height: 1.5; background: rgba(255,255,255,0.06); border-radius: 10px; padding: 12px 16px; border-left: 3px solid var(--accent); }
+        .hint { font-size: 0.75rem; color: rgba(255,255,255,0.35); text-align: center; margin-top: auto; padding-top: 12px; }
+
+        .back-icon { width: 48px; height: 48px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; box-shadow: 0 4px 18px var(--accent-shadow); }
+        .question { font-size: 1.1rem; font-weight: 600; line-height: 1.5; color: rgba(255,255,255,0.95); margin: 4px 0; }
+
+        .btn-reveal {
+            padding: 10px 22px;
+            border: 2px solid var(--accent);
+            border-radius: 10px;
+            background: transparent;
+            color: var(--accent);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 4px 0 0;
+        }
+        .btn-reveal:hover { background: var(--accent); color: #fff; transform: translateY(-2px); box-shadow: 0 4px 12px var(--accent-shadow); }
+        .btn-reveal:active { transform: translateY(0); }
+
+        .answer-wrapper {
+            width: 100%;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, opacity 0.3s ease;
+        }
+        .answer-wrapper.revealed { max-height: 180px; opacity: 1; }
+        .answer-inner {
+            padding: 14px 16px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 10px;
+            border-left: 3px solid var(--accent);
+            text-align: left;
+            color: rgba(255,255,255,0.9);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        .answer-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--accent); margin-bottom: 6px; display: block; }
+
+        .controls { margin-top: 40px; display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+        .btn { padding: 12px 28px; border: none; border-radius: 12px; font-family: 'Inter', sans-serif; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; color: #fff; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); backdrop-filter: blur(8px); }
+        .btn:hover { background: rgba(255,255,255,0.2); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+        .btn:active { transform: translateY(0); }
+
+        .progress-bar { margin-top: 24px; width: 100%; max-width: 1100px; }
+        .progress-track { height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #f7971e, #ffd200); border-radius: 3px; transition: width 0.5s ease; }
+        .progress-text { font-size: 0.8rem; color: rgba(255,255,255,0.4); text-align: center; margin-top: 8px; }
+
+        .card-wrapper:nth-child(1) { --accent: #6c5ce7; --accent-glow: rgba(108,92,231,0.5); --accent-shadow: rgba(108,92,231,0.35); }
+        .card-wrapper:nth-child(2) { --accent: #00b894; --accent-glow: rgba(0,184,148,0.5); --accent-shadow: rgba(0,184,148,0.35); }
+        .card-wrapper:nth-child(3) { --accent: #e17055; --accent-glow: rgba(225,112,85,0.5); --accent-shadow: rgba(225,112,85,0.35); }
+        .card-wrapper:nth-child(4) { --accent: #0984e3; --accent-glow: rgba(9,132,227,0.5); --accent-shadow: rgba(9,132,227,0.35); }
+        .card-wrapper:nth-child(5) { --accent: #fdcb6e; --accent-glow: rgba(253,203,110,0.5); --accent-shadow: rgba(253,203,110,0.35); }
+        .card-wrapper:nth-child(6) { --accent: #e84393; --accent-glow: rgba(232,67,147,0.5); --accent-shadow: rgba(232,67,147,0.35); }
+
+        @media (max-width: 640px) {
+            h1 { font-size: 1.6rem; }
+            .grid { grid-template-columns: 1fr; gap: 20px; }
+            .card-wrapper { height: 330px; }
+            .card-front, .card-back { padding: 22px 18px; }
+            .term { font-size: 1.25rem; }
+        }
+    </style>
+</head>
+<body>
+    <h1>Части речи</h1>
+    <p class="subtitle">Нажмите на карточку, чтобы перевернуть. Ответ откроется по кнопке.</p>
+
+    <div class="grid" id="cardGrid"></div>
+
+    <div class="controls">
+        <button class="btn" id="btnFlipAll">Перевернуть все</button>
+        <button class="btn" id="btnReset">Сбросить</button>
+        <button class="btn" id="btnShuffle">Перемешать</button>
+    </div>
+
+    <div class="progress-bar">
+        <div class="progress-track">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <p class="progress-text" id="progressText">Просмотрено: 0 из 6</p>
+    </div>
+
+    <script>
+        const cardDeckData = [
+            { icon: '📦', term: 'Имя существительное', example: '"Кошка сидела на подоконнике и наблюдала за птицами."', question: 'Выделите все существительные в предложении и определите их род и число.', answer: 'Кошка (ж.р., ед.ч.) — подоконнике (м.р., ед.ч.) — птицами (м.р., мн.ч.)' },
+            { icon: '🎨', term: 'Имя прилагательное', example: '"Старинный замок стоял на высоком холме, окружённый густым лесом."', question: 'Найдите все прилагательные. Укажите, к какому существительному относится каждое из них.', answer: 'Старинный → замок, высоком → холме, густым → лесом' },
+            { icon: '⚡', term: 'Глагол', example: '"Мальчик быстро бежал по дороге, не замечая никого вокруг."', question: 'Найдите глаголы, определите их время, лицо/число и вид (соверш./несоверш.).', answer: 'Бежал — прош. вр., м.р., ед.ч., несоверш. вид; Замечая — деепричастие (особая форма глагола)' },
+            { icon: '🧭', term: 'Наречие', example: '"Она пела очень красиво, и все слушали её тихо затаив дыхание."', question: 'Выделите наречия. К какому слову относится каждое? На какой вопрос отвечает?', answer: 'Очень → красиво (как? в какой степени?), красиво → пела (как?), тихо → слушали (как?)' },
+            { icon: '🔄', term: 'Местоимение', example: '"Он сказал ей, что они вместе пойдут туда, где никого не будет."', question: 'Найдите все местоимения и определите их разряд (личное, притяжательное и т.д.).', answer: 'Он/ей/они (личные), туда (указательное), где (относительное/союзное), никого (отрицательное)' },
+            { icon: '🔗', term: 'Предлог', example: '"Книга лежала на столе около окна, и свет падал сквозь занавески."', question: 'Найдите все предлоги. Какой падеж требует каждый из них?', answer: 'На (предложный п.) — столе, около (родительный п.) — окна, сквозь (винительный п.) — занавески' }
+        ];
+
+        let shuffledDeck = [...cardDeckData];
+        let flippedIndices = new Set();
+
+        function renderDeck() {
+            const gridEl = document.getElementById('cardGrid');
+            gridEl.innerHTML = '';
+            flippedIndices.clear();
+
+            shuffledDeck.forEach((item, idx) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'card-wrapper';
+                wrapper.dataset.cardIndex = idx;
+
+                wrapper.innerHTML = `
+                    <div class="card">
+                        <div class="card-front">
+                            <span class="card-number">${idx + 1}</span>
+                            <div>
+                                <div class="card-icon">${item.icon}</div>
+                                <div class="term-label">Часть речи</div>
+                                <div class="term">${item.term}</div>
+                            </div>
+                            <div>
+                                <div class="example-label">Пример</div>
+                                <div class="example">${item.example}</div>
+                            </div>
+                            <div class="hint">нажмите, чтобы увидеть задание</div>
+                        </div>
+                        <div class="card-back">
+                            <div class="back-icon">❓</div>
+                            <div class="question">${item.question}</div>
+                            <button class="btn-reveal" aria-label="Показать ответ">Показать ответ</button>
+                            <div class="answer-wrapper">
+                                <div class="answer-inner">
+                                    <span class="answer-label">Ответ</span>
+                                    ${item.answer}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                wrapper.addEventListener('click', (evt) => {
+                    if (evt.target.closest('.btn-reveal')) return;
+
+                    const isNowFlipped = !wrapper.classList.contains('flipped');
+                    wrapper.classList.toggle('flipped');
+
+                    if (isNowFlipped) {
+                        flippedIndices.add(idx);
+                    } else {
+                        flippedIndices.delete(idx);
+                        const ansBox = wrapper.querySelector('.answer-wrapper');
+                        const btnBox = wrapper.querySelector('.btn-reveal');
+                        if (ansBox) ansBox.classList.remove('revealed');
+                        if (btnBox) btnBox.textContent = 'Показать ответ';
+                    }
+                    updateProgress();
+                });
+
+                const revealBtn = wrapper.querySelector('.btn-reveal');
+                const answerBox = wrapper.querySelector('.answer-wrapper');
+                revealBtn.addEventListener('click', (evt) => {
+                    evt.stopPropagation();
+                    const isVisible = answerBox.classList.toggle('revealed');
+                    revealBtn.textContent = isVisible ? 'Скрыть ответ' : 'Показать ответ';
+                });
+
+                gridEl.appendChild(wrapper);
+            });
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const total = shuffledDeck.length;
+            const viewed = flippedIndices.size;
+            document.getElementById('progressFill').style.width = `${(viewed / total) * 100}%`;
+            document.getElementById('progressText').textContent = `Просмотрено: ${viewed} из ${total}`;
+        }
+
+        function resetAllAnswers() {
+            document.querySelectorAll('.answer-wrapper').forEach(box => box.classList.remove('revealed'));
+            document.querySelectorAll('.btn-reveal').forEach(btn => btn.textContent = 'Показать ответ');
+        }
+
+        document.getElementById('btnFlipAll').addEventListener('click', () => {
+            const allFlipped = flippedIndices.size === shuffledDeck.length;
+            document.querySelectorAll('.card-wrapper').forEach((wrapper, i) => {
+                if (allFlipped) {
+                    wrapper.classList.remove('flipped');
+                    flippedIndices.delete(i);
+                } else {
+                    wrapper.classList.add('flipped');
+                    flippedIndices.add(i);
+                }
+            });
+            if (allFlipped) resetAllAnswers();
+            updateProgress();
+        });
+
+        document.getElementById('btnReset').addEventListener('click', () => {
+            resetAllAnswers();
+            document.querySelectorAll('.card-wrapper').forEach(w => w.classList.remove('flipped'));
+            flippedIndices.clear();
+            updateProgress();
+        });
+
+        document.getElementById('btnShuffle').addEventListener('click', () => {
+            shuffledDeck = [...cardDeckData].sort(() => Math.random() - 0.5);
+            renderDeck();
+        });
+
+        renderDeck();
+    </script>
+</body>
+</html>
+

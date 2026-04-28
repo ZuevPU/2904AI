@@ -337,6 +337,10 @@ th {
   min-height: 80vh;
 }
 
+#stage4PromptFrame {
+  min-height: 80vh;
+}
+
 .builder-grid label {
   display: grid;
   gap: 4px;

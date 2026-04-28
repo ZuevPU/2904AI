@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
   <title>Нейросеть для учителя — мастер-класс</title>
   <link rel="stylesheet" href="./styles.css">
 </head>
+
 <body>
   <div class="app fade-in" id="app">
     <header class="app-header">
@@ -41,7 +43,10 @@
             <div class="mini-card">✅ Проверка: всегда адаптируйте и проверяйте материалы перед уроком</div>
             <div class="mini-card">🛠 Техника: протестируйте ссылки и артефакты ДО урока</div>
             <div class="mini-card">🌿 Гибкость: если интерактив «не зашёл» — это не провал, это обратная связь</div>
-            <div class="mini-card">🎯 Главное: технология — инструмент, а не цель. В центре — ученик и его развитие.</div>
+            <div class="mini-card">🎯 Главное: технология — инструмент, а не цель. В центре — ученик и его развитие.
+            </div>
+            <div class="mini-card">⚡️ Критическое мышление: учите учеников проверять факты и ставить под вопрос ответы
+              ИИ.</div>
           </div>
         </article>
 
@@ -115,22 +120,20 @@
           </ol>
           <div class="prompt-box">
             <p><strong>Пример запроса, который сработает:</strong></p>
-            <pre id="mumuPrompt">"Помоги создать 5 вопросов для викторины по рассказу 'Муму' для 5 класса. Вопросы должны быть разного типа: на внимание, на понимание, на размышление."</pre>
-            <button class="btn copy-btn" data-copy-target="mumuPrompt" aria-label="Скопировать пример запроса по Муму">📋 Скопировать пример запроса</button>
+            <pre
+              id="mumuPrompt">"Помоги создать 5 вопросов для викторины по рассказу 'Муму' для 5 класса. Вопросы должны быть разного типа: на внимание, на понимание, на размышление."</pre>
+            <button class="btn copy-btn" data-copy-target="mumuPrompt"
+              aria-label="Скопировать пример запроса по Муму">📋 Скопировать пример запроса</button>
             <span class="copy-status" aria-live="polite"></span>
           </div>
           <h4>Пример промпта</h4>
           <div class="actions">
-            <button class="btn" id="stage1FullscreenBtn" aria-label="Развернуть пример промпта на весь экран">🖥 На весь экран</button>
+            <button class="btn" id="stage1FullscreenBtn" aria-label="Развернуть пример промпта на весь экран">🖥 На весь
+              экран</button>
           </div>
           <div class="embed-wrap">
-            <iframe
-              id="stage1PromptFrame"
-              src="./example-mumu-quiz.html"
-              title="Пример промпта: викторина по Муму"
-              loading="lazy"
-              referrerpolicy="no-referrer"
-              allowfullscreen>
+            <iframe id="stage1PromptFrame" src="./example-mumu-quiz.html" title="Пример промпта: викторина по Муму"
+              loading="lazy" referrerpolicy="no-referrer" allowfullscreen>
             </iframe>
           </div>
         </article>
@@ -140,10 +143,14 @@
       <section class="stage" data-stage="1" aria-labelledby="stage2Title">
         <h2 id="stage2Title">Этап 2. От простого к сложному</h2>
         <div class="level-tabs" role="tablist" aria-label="Переключение уровней этапа 2">
-          <button class="level-tab active" data-level-tab="1" role="tab" aria-selected="true" aria-controls="levelPanel1">Уровень 1</button>
-          <button class="level-tab" data-level-tab="2" role="tab" aria-selected="false" aria-controls="levelPanel2">Уровень 2</button>
-          <button class="level-tab" data-level-tab="3" role="tab" aria-selected="false" aria-controls="levelPanel3">Уровень 3</button>
-          <button class="level-tab" data-level-tab="4" role="tab" aria-selected="false" aria-controls="levelPanel4">Уровень 4</button>
+          <button class="level-tab active" data-level-tab="1" role="tab" aria-selected="true"
+            aria-controls="levelPanel1">Уровень 1</button>
+          <button class="level-tab" data-level-tab="2" role="tab" aria-selected="false"
+            aria-controls="levelPanel2">Уровень 2</button>
+          <button class="level-tab" data-level-tab="3" role="tab" aria-selected="false"
+            aria-controls="levelPanel3">Уровень 3</button>
+          <button class="level-tab" data-level-tab="4" role="tab" aria-selected="false"
+            aria-controls="levelPanel4">Уровень 4</button>
         </div>
         <div class="card-grid">
           <article class="card level-card level-1 active" id="levelPanel1" data-level-panel="1" role="tabpanel">
@@ -158,7 +165,8 @@
               </thead>
               <tbody>
                 <tr>
-                  <td>"Придумай 5 вопросов по теме 'Вода' для 3 класса: 2 на выбор ответа, 2 на внимание, 1 на размышление"</td>
+                  <td>"Придумай 5 вопросов по теме 'Вода' для 3 класса: 2 на выбор ответа, 2 на внимание, 1 на
+                    размышление"</td>
                   <td>Готовые вопросы для устного опроса</td>
                 </tr>
                 <tr>
@@ -171,6 +179,16 @@
                 </tr>
               </tbody>
             </table>
+            <h4>Пример промпта</h4>
+            <div class="actions">
+              <button class="btn" id="stage1FullscreenBtn" aria-label="Развернуть пример промпта на весь экран">🖥 На
+                весь экран</button>
+            </div>
+            <div class="embed-wrap">
+              <iframe id="stage1PromptFrame" src="./1.html" title="Пример промпта: викторина по Муму" loading="lazy"
+                referrerpolicy="no-referrer" allowfullscreen>
+              </iframe>
+            </div>
           </article>
 
           <article class="card level-card level-2" id="levelPanel2" data-level-panel="2" role="tabpanel" hidden>
@@ -186,10 +204,12 @@
               <tbody>
                 <tr>
                   <td>"Создай таблицу 'Плюсы и минусы' для темы 'Интернет' — 4 столбца, простой язык для 5 класса"</td>
-                  <td>Таблицу с положительными и отрицательными сторонами Интернета, которую можно использовать для дальнейшей работы</td>
+                  <td>Таблицу с положительными и отрицательными сторонами Интернета, которую можно использовать для
+                    дальнейшей работы</td>
                 </tr>
                 <tr>
-                  <td>"Напиши сценарий ролевой игры 'Экскурсия в музей' для урока истории, 5 ролей, реплики на 2 минуты"</td>
+                  <td>"Напиши сценарий ролевой игры 'Экскурсия в музей' для урока истории, 5 ролей, реплики на 2 минуты"
+                  </td>
                   <td>Сценарий игры</td>
                 </tr>
                 <tr>
@@ -198,6 +218,16 @@
                 </tr>
               </tbody>
             </table>
+            <h4>Пример промпта</h4>
+            <div class="actions">
+              <button class="btn" id="stage1FullscreenBtn" aria-label="Развернуть пример промпта на весь экран">🖥 На
+                весь экран</button>
+            </div>
+            <div class="embed-wrap">
+              <iframe id="stage1PromptFrame" src="./2.html" title="Пример промпта: викторина по Муму" loading="lazy"
+                referrerpolicy="no-referrer" allowfullscreen>
+              </iframe>
+            </div>
           </article>
 
           <article class="card level-card level-3" id="levelPanel3" data-level-panel="3" role="tabpanel" hidden>
@@ -212,16 +242,29 @@
               </thead>
               <tbody>
                 <tr>
-                  <td>"Создай текстовый квест 'Спасение планеты': - 3 варианта выбора на каждом шаге - 4 возможных финала - тема: экология, для 6 класса - язык простой, с юмором"</td>
-                  <td>Ученики читают ситуацию → выбирают действие → видят последствия. Учитель управляет обсуждением после каждого выбора.</td>
+                  <td>"Создай текстовый квест 'Спасение планеты': - 3 варианта выбора на каждом шаге - 4 возможных
+                    финала - тема: экология, для 6 класса - язык простой, с юмором"</td>
+                  <td>Ученики читают ситуацию → выбирают действие → видят последствия. Учитель управляет обсуждением
+                    после каждого выбора.</td>
                 </tr>
               </tbody>
             </table>
+            <h4>Пример промпта</h4>
+            <div class="actions">
+              <button class="btn" id="stage1FullscreenBtn" aria-label="Развернуть пример промпта на весь экран">🖥 На
+                весь экран</button>
+            </div>
+            <div class="embed-wrap">
+              <iframe id="stage1PromptFrame" src="./3.html" title="Пример промпта: викторина по Муму" loading="lazy"
+                referrerpolicy="no-referrer" allowfullscreen>
+              </iframe>
+            </div>
           </article>
 
           <article class="card level-card level-4" id="levelPanel4" data-level-panel="4" role="tabpanel" hidden>
             <h3>Уровень 4: Артефакты нейросети — интерактив в браузере</h3>
-            <p>Артефакты — функция нейросети, которая создаёт готовые мини-приложения: викторины, тренажёры, таймеры, доски идей. Работают в браузере, без установки программ.</p>
+            <p>Артефакты — функция нейросети, которая создаёт готовые мини-приложения: викторины, тренажёры, таймеры,
+              доски идей. Работают в браузере, без установки программ.</p>
             <div class="steps-list">
               <h4>Как это работает (очень просто):</h4>
               <ol>
@@ -242,7 +285,8 @@
               </thead>
               <tbody>
                 <tr>
-                  <td>"Создай интерактивную викторину из 5 вопросов по математике для 4 класса: кнопки выбора, проверка ответа, счётчик баллов"</td>
+                  <td>"Создай интерактивную викторину из 5 вопросов по математике для 4 класса: кнопки выбора, проверка
+                    ответа, счётчик баллов"</td>
                   <td>Готовая веб-викторина с кнопками и автоматической проверкой</td>
                   <td>Открыть на проекторе — ученики отвечают по очереди</td>
                 </tr>
@@ -263,8 +307,20 @@
                 </tr>
               </tbody>
             </table>
+            <h4>Пример промпта</h4>
+            <div class="actions">
+              <button class="btn" id="stage1FullscreenBtn" aria-label="Развернуть пример промпта на весь экран">🖥 На
+                весь экран</button>
+            </div>
+            <div class="embed-wrap">
+              <iframe id="stage1PromptFrame" src="./4.html" title="Пример промпта: викторина по Муму" loading="lazy"
+                referrerpolicy="no-referrer" allowfullscreen>
+              </iframe>
+            </div>
           </article>
+
         </div>
+
       </section>
 
       <!-- Этап 3 -->
@@ -273,7 +329,8 @@
         <article class="card">
           <h3>🧮 Формула идеального промта</h3>
           <p class="formula">`Роль + Задача + Контекст + Формат + Ограничения`</p>
-          <p>Пример: «Ты — методист по истории. Создай интерактивную хронологическую ленту по теме "Петровские реформы" для 7 класса. Формат: 8 событий с датами, кратким описанием и вопросом на анализ. Сложность — базовая»</p>
+          <p>Пример: «Ты — методист по истории. Создай интерактивную хронологическую ленту по теме "Петровские реформы"
+            для 7 класса. Формат: 8 событий с датами, кратким описанием и вопросом на анализ. Сложность — базовая»</p>
           <div class="prompt-builder">
             <h4>Интерактивный конструктор промпта</h4>
             <div class="builder-grid">
@@ -281,24 +338,22 @@
               <label>Задача <input type="text" id="taskInput" placeholder="Создай ..."></label>
               <label>Контекст <input type="text" id="contextInput" placeholder="для ... класса, тема ..."></label>
               <label>Формат <input type="text" id="formatInput" placeholder="Формат: ..."></label>
-              <label>Ограничения <input type="text" id="constraintsInput" placeholder="Сложность, объем, стиль ..."></label>
+              <label>Ограничения <input type="text" id="constraintsInput"
+                  placeholder="Сложность, объем, стиль ..."></label>
             </div>
             <pre id="generatedPrompt">Заполните поля конструктора, чтобы получить готовый промпт.</pre>
-            <button class="btn copy-btn" data-copy-target="generatedPrompt" aria-label="Скопировать сгенерированный промпт">📋 Копировать</button>
+            <button class="btn copy-btn" data-copy-target="generatedPrompt"
+              aria-label="Скопировать сгенерированный промпт">📋 Копировать</button>
             <span class="copy-status" aria-live="polite"></span>
           </div>
           <h4>Пример промпта</h4>
           <div class="actions">
-            <button class="btn" id="stage3FullscreenBtn" aria-label="Развернуть пример промпта этапа 3 на весь экран">🖥 На весь экран</button>
+            <button class="btn" id="stage3FullscreenBtn" aria-label="Развернуть пример промпта этапа 3 на весь экран">🖥
+              На весь экран</button>
           </div>
           <div class="embed-wrap">
-            <iframe
-              id="stage3PromptFrame"
-              src="./example-quiz.html"
-              title="Пример промпта"
-              loading="lazy"
-              referrerpolicy="no-referrer"
-              allowfullscreen>
+            <iframe id="stage3PromptFrame" src="./example-quiz.html" title="Пример промпта" loading="lazy"
+              referrerpolicy="no-referrer" allowfullscreen>
             </iframe>
           </div>
         </article>
@@ -309,34 +364,57 @@
           <div class="card-grid">
             <div class="mini-card example-card">
               <h4>Литература, 8 класс</h4>
-              <p>«Создай интерактивный диалог-тренажёр: ученик играет роль Раскольникова, отвечает на вопросы Сони. 5 реплик с вариантами ответов и обратной связью»</p>
+              <p>«Создай интерактивный диалог-тренажёр: ученик играет роль Раскольникова, отвечает на вопросы Сони. 5
+                реплик с вариантами ответов и обратной связью»</p>
               <div class="actions">
-                <button class="btn copy-btn" data-copy-text="Создай интерактивный диалог-тренажёр: ученик играет роль Раскольникова, отвечает на вопросы Сони. 5 реплик с вариантами ответов и обратной связью" aria-label="Скопировать промпт литература 8 класс">📋 Копировать промпт</button>
-                <a class="btn link-btn" href="https://chat.qwen.ai/s/deploy/t_3abfdeb1-03e1-4e1e-93f6-12145d3ac415" target="_blank" rel="noopener noreferrer" aria-label="Открыть пример литература 8 класс">🔗 Открыть пример</a>
+                <button class="btn copy-btn"
+                  data-copy-text="Создай интерактивный диалог-тренажёр: ученик играет роль Раскольникова, отвечает на вопросы Сони. 5 реплик с вариантами ответов и обратной связью"
+                  aria-label="Скопировать промпт литература 8 класс">📋 Копировать промпт</button>
+                <a class="btn link-btn" href="https://chat.qwen.ai/s/deploy/t_3abfdeb1-03e1-4e1e-93f6-12145d3ac415"
+                  target="_blank" rel="noopener noreferrer" aria-label="Открыть пример литература 8 класс">🔗 Открыть
+                  пример</a>
               </div>
             </div>
             <div class="mini-card example-card">
               <h4>Математика, 5 класс</h4>
-              <p>«Придумай 3 задачи на проценты в контексте футбола. Добавь визуальную подсказку и пошаговое решение»</p>
+              <p>«Придумай 3 задачи на проценты в контексте футбола. Добавь визуальную подсказку и пошаговое решение»
+              </p>
               <div class="actions">
-                <button class="btn copy-btn" data-copy-text="Придумай 3 задачи на проценты в контексте футбола. Добавь визуальную подсказку и пошаговое решение" aria-label="Скопировать промпт математика 5 класс">📋 Копировать промпт</button>
-                <a class="btn link-btn" href="https://chat.qwen.ai/s/deploy/t_a80f6cc6-0c1c-45bc-8ccc-128120b35ba0" target="_blank" rel="noopener noreferrer" aria-label="Открыть пример математика 5 класс">🔗 Открыть пример</a>
+                <button class="btn copy-btn"
+                  data-copy-text="Придумай 3 задачи на проценты в контексте футбола. Добавь визуальную подсказку и пошаговое решение"
+                  aria-label="Скопировать промпт математика 5 класс">📋 Копировать промпт</button>
+                <a class="btn link-btn" href="https://chat.qwen.ai/s/deploy/t_a80f6cc6-0c1c-45bc-8ccc-128120b35ba0"
+                  target="_blank" rel="noopener noreferrer" aria-label="Открыть пример математика 5 класс">🔗 Открыть
+                  пример</a>
               </div>
             </div>
             <div class="mini-card example-card">
               <h4>География, 7 класс</h4>
-              <p>«Создай интерактивный рабочий лист по теме "Линейные уравнения". Генерируй 5 случайных уравнений вида ax + b = c (коэффициенты должны быть целыми числами от -10 до 10). Ученик вводит ответ в поле. При нажатии "Проверить": если верно — зеленым цветом "Молодец!", если неверно — покажи правильный ответ и краткую подсказку, как решить (например: "Сначала перенеси свободный член вправо"). В конце покажи итоговый счет (например, 4 из 5). Дизайн должен быть строгим, школьным.»</p>
+              <p>«Создай интерактивный рабочий лист по теме "Линейные уравнения". Генерируй 5 случайных уравнений вида
+                ax + b = c (коэффициенты должны быть целыми числами от -10 до 10). Ученик вводит ответ в поле. При
+                нажатии "Проверить": если верно — зеленым цветом "Молодец!", если неверно — покажи правильный ответ и
+                краткую подсказку, как решить (например: "Сначала перенеси свободный член вправо"). В конце покажи
+                итоговый счет (например, 4 из 5). Дизайн должен быть строгим, школьным.»</p>
               <div class="actions">
-                <button class="btn copy-btn" data-copy-text="Создай интерактивный рабочий лист по теме 'Линейные уравнения'. Генерируй 5 случайных уравнений вида ax + b = c (коэффициенты должны быть целыми числами от -10 до 10). Ученик вводит ответ в поле. При нажатии 'Проверить': если верно — зеленым цветом 'Молодец!', если неверно — покажи правильный ответ и краткую подсказку, как решить (например: 'Сначала перенеси свободный член вправо'). В конце покажи итоговый счет (например, 4 из 5). Дизайн должен быть строгим, школьным." aria-label="Скопировать промпт география 7 класс">📋 Копировать промпт</button>
-                <a class="btn link-btn" href="https://chat.qwen.ai/s/deploy/t_00c31d38-82e5-49f9-9d25-54c526758d40" target="_blank" rel="noopener noreferrer" aria-label="Открыть пример география 7 класс">🔗 Открыть пример</a>
+                <button class="btn copy-btn"
+                  data-copy-text="Создай интерактивный рабочий лист по теме 'Линейные уравнения'. Генерируй 5 случайных уравнений вида ax + b = c (коэффициенты должны быть целыми числами от -10 до 10). Ученик вводит ответ в поле. При нажатии 'Проверить': если верно — зеленым цветом 'Молодец!', если неверно — покажи правильный ответ и краткую подсказку, как решить (например: 'Сначала перенеси свободный член вправо'). В конце покажи итоговый счет (например, 4 из 5). Дизайн должен быть строгим, школьным."
+                  aria-label="Скопировать промпт география 7 класс">📋 Копировать промпт</button>
+                <a class="btn link-btn" href="https://chat.qwen.ai/s/deploy/t_00c31d38-82e5-49f9-9d25-54c526758d40"
+                  target="_blank" rel="noopener noreferrer" aria-label="Открыть пример география 7 класс">🔗 Открыть
+                  пример</a>
               </div>
             </div>
             <div class="mini-card example-card">
               <h4>Биология, 9 класс</h4>
-              <p>«Создай квиз из 7 вопросов по теме "Фотосинтез" с разным уровнем сложности. После каждого ответа — объяснение, почему вариант верный/неверный»</p>
+              <p>«Создай квиз из 7 вопросов по теме "Фотосинтез" с разным уровнем сложности. После каждого ответа —
+                объяснение, почему вариант верный/неверный»</p>
               <div class="actions">
-                <button class="btn copy-btn" data-copy-text="Создай квиз из 7 вопросов по теме 'Фотосинтез' с разным уровнем сложности. После каждого ответа — объяснение, почему вариант верный/неверный" aria-label="Скопировать промпт биология 9 класс">📋 Копировать промпт</button>
-                <a class="btn link-btn" href="https://chat.qwen.ai/s/deploy/t_4a828e0b-5cf6-4868-93cb-486083b16bae" target="_blank" rel="noopener noreferrer" aria-label="Открыть пример биология 9 класс">🔗 Открыть пример</a>
+                <button class="btn copy-btn"
+                  data-copy-text="Создай квиз из 7 вопросов по теме 'Фотосинтез' с разным уровнем сложности. После каждого ответа — объяснение, почему вариант верный/неверный"
+                  aria-label="Скопировать промпт биология 9 класс">📋 Копировать промпт</button>
+                <a class="btn link-btn" href="https://chat.qwen.ai/s/deploy/t_4a828e0b-5cf6-4868-93cb-486083b16bae"
+                  target="_blank" rel="noopener noreferrer" aria-label="Открыть пример биология 9 класс">🔗 Открыть
+                  пример</a>
               </div>
             </div>
           </div>
@@ -357,16 +435,30 @@
             </thead>
             <tbody>
               <tr>
-                <td>Создай интерактивный урок по истории на тему «Кавказская война». Урок должен включать в себя все этапы урока и быть интересным и разнообразным для детей с разным уровнем знаний.</td>
-                <td><a href="https://chat.qwen.ai/s/deploy/t_897ae6ea-ae9f-4524-bae5-314606edd881" target="_blank" rel="noopener noreferrer">https://chat.qwen.ai/s/deploy/t_897ae6ea-ae9f-4524-bae5-314606edd881</a></td>
+                <td>Создай интерактивный урок по истории на тему «Кавказская война». Урок должен включать в себя все
+                  этапы урока и быть интересным и разнообразным для детей с разным уровнем знаний.</td>
+                <td><a href="https://chat.qwen.ai/s/deploy/t_897ae6ea-ae9f-4524-bae5-314606edd881" target="_blank"
+                    rel="noopener noreferrer">https://chat.qwen.ai/s/deploy/t_897ae6ea-ae9f-4524-bae5-314606edd881</a>
+                </td>
               </tr>
             </tbody>
           </table>
+          <h4>Пример выполнения промпта</h4>
+          <div class="actions">
+            <button class="btn" id="stage4FullscreenBtn"
+              aria-label="Развернуть пример выполнения этапа 4 на весь экран">🖥 На весь экран</button>
+          </div>
+          <div class="embed-wrap">
+            <iframe id="stage4PromptFrame" src="./example-stage4-caucasus-lesson.html"
+              title="Пример выполнения промпта для этапа 4" loading="lazy" referrerpolicy="no-referrer" allowfullscreen>
+            </iframe>
+          </div>
         </article>
 
         <article class="card">
           <h3>📝 Расширенный промпт-шаблон</h3>
-          <pre id="extendedPrompt">Ты — профессиональный методист и педагог-дизайнер с опытом создания современных уроков.
+          <pre
+            id="extendedPrompt">Ты — профессиональный методист и педагог-дизайнер с опытом создания современных уроков.
 ЗАДАЧА:
 Создай детальный план гибридного урока (офлайн + цифровые элементы), который будет интересен РАЗНЫМ типам учеников.
 ПАРАМЕТРЫ УРОКА:
@@ -432,95 +524,42 @@
 • Адаптивность: пометки [для начальной школы] / [для старшеклассников], где уместно
 ВАЖНО:
 Не предлагай интерактив ради интерактива. Каждый элемент должен работать на цель урока и учитывать разнообразие учеников.</pre>
-          <button class="btn copy-btn" data-copy-target="extendedPrompt" aria-label="Скопировать весь шаблон">📋 Скопировать весь шаблон</button>
+          <button class="btn copy-btn" data-copy-target="extendedPrompt" aria-label="Скопировать весь шаблон">📋
+            Скопировать весь шаблон</button>
           <span class="copy-status" aria-live="polite"></span>
         </article>
 
-        <article class="card">
-          <h3>🧩 Конструктор расширенного промпта</h3>
-          <div class="stage4-builder">
-            <div class="builder-grid">
-              <label>Роль
-                <input type="text" id="s4Role" placeholder="Ты — профессиональный методист и педагог-дизайнер...">
-              </label>
-              <label>Предмет
-                <input type="text" id="s4Subject" placeholder="История">
-              </label>
-              <label>Класс
-                <input type="text" id="s4Class" placeholder="7 класс">
-              </label>
-              <label>Тема
-                <input type="text" id="s4Topic" placeholder="Кавказская война">
-              </label>
-              <label>Длительность
-                <input type="text" id="s4Duration" placeholder="40 мин">
-              </label>
-              <label>Техническое оснащение
-                <input type="text" id="s4Equipment" placeholder="проектор, смартфоны, интерактивная доска...">
-              </label>
-            </div>
-
-            <label>Тема / описание
-              <textarea id="s4Description" rows="3" placeholder="Помоги создать 5 вопросов для викторины по рассказу 'Муму' для 5 класса..."></textarea>
-            </label>
-
-            <div class="stage4-option-group">
-              <p><strong>Тип артефакта</strong></p>
-              <div class="artifact-types" id="artifactTypes">
-                <button type="button" class="artifact-chip active" data-artifact-type="Викторина / Тест">Викторина / Тест</button>
-                <button type="button" class="artifact-chip" data-artifact-type="Сопоставление (Matching)">Сопоставление (Matching)</button>
-                <button type="button" class="artifact-chip" data-artifact-type="Хронологическая линейка">Хронологическая линейка</button>
-                <button type="button" class="artifact-chip" data-artifact-type="Флеш-карточки">Флеш-карточки</button>
-                <button type="button" class="artifact-chip" data-artifact-type="Кроссворд">Кроссворд</button>
-                <button type="button" class="artifact-chip" data-artifact-type="Интерактивный рабочий лист">Интерактивный рабочий лист</button>
-                <button type="button" class="artifact-chip" data-artifact-type="Кейс-стади">Кейс-стади</button>
-                <button type="button" class="artifact-chip" data-artifact-type="Образовательный калькулятор">Образовательный калькулятор</button>
-                <button type="button" class="artifact-chip" data-artifact-type="Мастер-класс / Вебинар">Мастер-класс / Вебинар</button>
-                <button type="button" class="artifact-chip" data-artifact-type="Лонгрид с объяснением">Лонгрид с объяснением</button>
-                <button type="button" class="artifact-chip" data-artifact-type="Интерактивный учебник">Интерактивный учебник</button>
-                <button type="button" class="artifact-chip" data-artifact-type="База знаний">База знаний</button>
-                <button type="button" class="artifact-chip" data-artifact-type="Чек-лист процесса">Чек-лист процесса</button>
-                <button type="button" class="artifact-chip" data-artifact-type="Глоссарий терминов">Глоссарий терминов</button>
-                <button type="button" class="artifact-chip" data-artifact-type="Рабочая тетрадь">Рабочая тетрадь</button>
-              </div>
-            </div>
-
-            <div class="stage4-option-group">
-              <p><strong>Банк интерактивных приёмов (выбери 4-6)</strong></p>
-              <div class="checkbox-grid">
-                <label><input type="checkbox" class="s4Technique" value="Быстрый квиз (Kahoot/Quizizz/Google Forms)" checked> Быстрый квиз (Kahoot/Quizizz/Google Forms)</label>
-                <label><input type="checkbox" class="s4Technique" value="Ментальная карта в реальном времени (Miro/Jamboard)" checked> Ментальная карта в реальном времени (Miro/Jamboard)</label>
-                <label><input type="checkbox" class="s4Technique" value="Голосование с визуализацией (Mentimeter)"> Голосование с визуализацией (Mentimeter)</label>
-                <label><input type="checkbox" class="s4Technique" value="Живая статистика — ученики перемещаются по классу"> Живая статистика — ученики перемещаются по классу</label>
-                <label><input type="checkbox" class="s4Technique" value="Микро-исследования в парах с гаджетами"> Микро-исследования в парах с гаджетами</label>
-                <label><input type="checkbox" class="s4Technique" value="Создание контента: мемы, тикток-сценарии, комиксы по теме" checked> Создание контента: мемы, тикток-сценарии, комиксы по теме</label>
-                <label><input type="checkbox" class="s4Technique" value="Ролевая мини-игра / дебаты / суд над понятием" checked> Ролевая мини-игра / дебаты / суд над понятием</label>
-                <label><input type="checkbox" class="s4Technique" value="Квест с QR-кодами по классу/школе"> Квест с QR-кодами по классу/школе</label>
-                <label><input type="checkbox" class="s4Technique" value="Интерактивное видео с остановками и вопросами"> Интерактивное видео с остановками и вопросами</label>
-                <label><input type="checkbox" class="s4Technique" value="Коллаборативный документ (класс заполняет вместе)"> Коллаборативный документ (класс заполняет вместе)</label>
-              </div>
-            </div>
-
-            <div class="actions">
-              <button class="btn" id="s4BuildBtn" type="button">Собрать промпт</button>
-              <button class="btn" id="s4ClearBtn" type="button">Очистить</button>
-              <button class="btn copy-btn" id="s4CopyBtn" type="button" data-copy-target="s4PromptOutput">📋 Копировать</button>
-            </div>
-            <pre id="s4PromptOutput">Заполните параметры и нажмите «Собрать промпт».</pre>
-            <span class="copy-status" aria-live="polite"></span>
-          </div>
-        </article>
 
         <article class="card">
           <h3>👥 Задание для групп</h3>
+
           <ul class="checklist">
-            <li><label><input type="checkbox"> 1. Выберите тему и класс (можно свою реальную тему на следующей неделе)</label></li>
+            <li><label><input type="checkbox"> 1. Выберите тему и класс (можно свою реальную тему на следующей
+                неделе)</label></li>
             <li><label><input type="checkbox"> 2. Сформулируйте промт</label></li>
-            <li><label><input type="checkbox"> 3. Создайте интерактивный артефакт (квиз, сценарий, адаптацию текста, визуал)</label></li>
-            <li><label><input type="checkbox"> 4. Протестируйте на соседней группе: «Поймёт ли ученик? Заинтересует ли?»</label></li>
+            <li><label><input type="checkbox"> 3. Создайте интерактивный артефакт (квиз, сценарий, адаптацию текста,
+                визуал)</label></li>
+            <li><label><input type="checkbox"> 4. Протестируйте на соседней группе: «Поймёт ли ученик? Заинтересует
+                ли?»</label></li>
           </ul>
-          <button class="btn random-btn" id="randomPromptBtn" aria-label="Сгенерировать случайный пример">🎲 Сгенерировать случайный пример</button>
-          <pre id="randomPromptOutput">Нажмите кнопку, чтобы получить случайный промпт из библиотеки Этапа 3.</pre>
+
+          <h4>Инструкция: как создать приложение</h4>
+          <a class="btn link-btn" href="https://qwen.ai"
+          target="_blank" rel="noopener noreferrer" aria-label="Открыть пример математика 5 класс">🔗 Открыть
+          QWEN</a>
+          <ul>
+
+            <li> Выберите режим: «Артефакты»</li>
+            <li> Добавьте задачу: прикрепите файл при необходимости</li>
+            <li> Введите промпт и дождитесь генерации — ИИ создаст HTML/CSS/JS код</li>
+            <li> Нажмите «Предварительный просмотр» или «Запустить», чтобы увидеть приложение прямо в чате</li>
+            <li> Протестируйте приложение: проверьте работу кнопок и полей ввода, убедитесь, что логика верна —
+              математическая и алгоритмическая</li>
+            <li> Напишите правки агенту: «Исправь ошибку в расчёте» или «Сделай кнопку больше»</li>
+            <li> Нажмите «Развернуть», чтобы открыть приложение на весь экран без интерфейса чата</li>
+            <li> Скопируйте ссылку из адресной строки или через вкладку «Поделиться»</li>
+          </ul>
+
         </article>
       </section>
     </main>
@@ -537,4 +576,5 @@
 
   <script src="./script.js"></script>
 </body>
+
 </html>

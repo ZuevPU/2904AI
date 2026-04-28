@@ -132,6 +132,8 @@ const stage1FullscreenBtn = document.getElementById("stage1FullscreenBtn");
 const stage1PromptFrame = document.getElementById("stage1PromptFrame");
 const stage3FullscreenBtn = document.getElementById("stage3FullscreenBtn");
 const stage3PromptFrame = document.getElementById("stage3PromptFrame");
+const stage4FullscreenBtn = document.getElementById("stage4FullscreenBtn");
+const stage4PromptFrame = document.getElementById("stage4PromptFrame");
 const s4BuildBtn = document.getElementById("s4BuildBtn");
 const s4ClearBtn = document.getElementById("s4ClearBtn");
 const s4PromptOutput = document.getElementById("s4PromptOutput");
@@ -191,6 +193,19 @@ stage3FullscreenBtn?.addEventListener("click", async () => {
       return;
     }
     await stage3PromptFrame.requestFullscreen();
+  } catch (error) {
+    console.error("Fullscreen error:", error);
+  }
+});
+
+stage4FullscreenBtn?.addEventListener("click", async () => {
+  if (!stage4PromptFrame) return;
+  try {
+    if (document.fullscreenElement) {
+      await document.exitFullscreen();
+      return;
+    }
+    await stage4PromptFrame.requestFullscreen();
   } catch (error) {
     console.error("Fullscreen error:", error);
   }

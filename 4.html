@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Угадай страну по флагу</title>
+    <link href="https://cdn.jsdelivr.net/npm/fontsource-inter@5.0.16/index.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            overflow-x: hidden;
+        }
+        .game-container {
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            margin: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .header h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #f7971e, #ffd200);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .stats {
+            display: flex;
+            gap: 16px;
+            font-size: 0.95rem;
+        }
+        .stat {
+            background: rgba(255,255,255,0.1);
+            padding: 6px 14px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+        .stat span { font-weight: 700; color: #ffd200; }
+        .card {
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 20px;
+            padding: 30px 24px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .flag-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+        .flag-box {
+            width: 240px;
+            height: 160px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            border: 3px solid rgba(255,255,255,0.15);
+            background: #2a2a4a;
+            transition: transform 0.3s;
+        }
+        .flag-box:hover { transform: scale(1.03); }
+        .flag-box svg { width: 100%; height: 100%; display: block; }
+        .question-text {
+            text-align: center;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            opacity: 0.85;
+        }
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .options-grid .option-btn:last-child:nth-child(odd) {
+            grid-column: 1 / -1;
+            max-width: 50%;
+            justify-self: center;
+        }
+        .option-btn {
+            background: rgba(255,255,255,0.08);
+            border: 2px solid rgba(255,255,255,0.15);
+            color: #fff;
+            padding: 14px 12px;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.25s;
+            font-weight: 500;
+        }
+        .option-btn:hover:not(:disabled) {
+            background: rgba(255,255,255,0.18);
+            border-color: #ffd200;
+            transform: translateY(-2px);
+        }
+        .option-btn:disabled { cursor: default; }
+        .option-btn.correct {
+            background: rgba(46, 213, 115, 0.3) !important;
+            border-color: #2ed573 !important;
+            animation: pulse-green 0.5s;
+        }
+        .option-btn.wrong {
+            background: rgba(255, 71, 87, 0.3) !important;
+            border-color: #ff4757 !important;
+            animation: shake 0.4s;
+        }
+        @keyframes pulse-green {
+            0% { transform: scale(1); } 50% { transform: scale(1.04); } 100% { transform: scale(1); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+        .hint-section { margin-bottom: 16px; }
+        .hint-btn {
+            width: 100%;
+            background: linear-gradient(90deg, #a18cd1, #fbc2eb);
+            border: none;
+            color: #1a1a2e;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.25s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .hint-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(161,140,209,0.4); }
+        .hint-btn:disabled { opacity: 0.4; cursor: default; }
+        .hint-display {
+            margin-top: 10px;
+            padding: 12px 16px;
+            background: rgba(161,140,209,0.15);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            display: none;
+            animation: fadeIn 0.3s;
+            border-left: 3px solid #a18cd1;
+        }
+        .hint-display.visible { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+
+        .fact-card {
+            margin-top: 16px;
+            padding: 16px 20px;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            display: none;
+            animation: slideUp 0.4s;
+        }
+        .fact-card.visible { display: block; }
+        .fact-card.fact-correct {
+            background: rgba(46, 213, 115, 0.12);
+            border: 1px solid rgba(46, 213, 115, 0.3);
+        }
+        .fact-card.fact-wrong {
+            background: rgba(255, 71, 87, 0.12);
+            border: 1px solid rgba(255, 71, 87, 0.3);
+        }
+        .fact-card .fact-title {
+            font-weight: 700;
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.7;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .next-btn {
+            width: 100%;
+            background: linear-gradient(90deg, #f7971e, #ffd200);
+            border: none;
+            color: #1a1a2e;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.25s;
+            margin-top: 16px;
+            display: none;
+        }
+        .next-btn.visible { display: block; }
+        .next-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(247,151,30,0.4); }
+
+        .result-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+            display: none; justify-content: center; align-items: center;
+            z-index: 100; backdrop-filter: blur(5px);
+        }
+        .result-overlay.visible { display: flex; animation: fadeIn 0.4s; }
+        .result-card {
+            background: linear-gradient(135deg, #1a1a2e, #302b63);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 24px; padding: 40px 30px; text-align: center;
+            max-width: 400px; width: 90%; animation: scaleIn 0.4s;
+        }
+        @keyframes scaleIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .result-card h2 {
+            font-size: 1.8rem; margin-bottom: 10px;
+            background: linear-gradient(90deg, #f7971e, #ffd200);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .result-emoji { font-size: 4rem; margin-bottom: 16px; }
+        .result-score { font-size: 3rem; font-weight: 800; color: #ffd200; margin: 16px 0; }
+        .result-detail { font-size: 1rem; opacity: 0.7; margin-bottom: 24px; }
+        .restart-btn {
+            background: linear-gradient(90deg, #f7971e, #ffd200); border: none;
+            color: #1a1a2e; padding: 14px 40px; border-radius: 12px;
+            font-size: 1rem; font-family: 'Inter', sans-serif; cursor: pointer;
+            font-weight: 700; transition: all 0.25s;
+        }
+        .restart-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(247,151,30,0.4); }
+        .streak-badge {
+            display: inline-block; background: linear-gradient(90deg, #ff6b6b, #ffa502);
+            color: #fff; padding: 4px 12px; border-radius: 20px;
+            font-size: 0.8rem; font-weight: 600; margin-left: 8px; animation: fadeIn 0.3s;
+        }
+        .round-indicator { text-align: center; font-size: 0.85rem; opacity: 0.5; margin-bottom: 16px; }
+        @media (max-width: 480px) {
+            .game-container { padding: 12px; margin: 10px; }
+            .card { padding: 20px 16px; }
+            .flag-box { width: 200px; height: 133px; }
+            .options-grid { grid-template-columns: 1fr; }
+            .options-grid .option-btn:last-child:nth-child(odd) { max-width: 100%; }
+            .header h1 { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <h1>🌍 Угадай страну по флагу</h1>
+            <div class="stats">
+                <div class="stat">Очки: <span id="score">0</span></div>
+                <div class="stat">Вопрос: <span id="question-num">1</span>/<span id="total-questions">10</span></div>
+            </div>
+        </div>
+        <div class="round-indicator" id="streak-container"></div>
+        <div class="card">
+            <div class="flag-wrapper">
+                <div class="flag-box" id="flag-box"></div>
+            </div>
+            <p class="question-text">Какой стране принадлежит этот флаг?</p>
+            <div class="options-grid" id="options"></div>
+            <div class="hint-section">
+                <button class="hint-btn" id="hint-btn" onclick="showHint()">
+                    💡 Показать подсказку (<span id="hints-left">2</span> осталось)
+                </button>
+                <div class="hint-display" id="hint-display"></div>
+            </div>
+            <div class="fact-card" id="fact-card">
+                <div class="fact-title">📖 Интересный факт</div>
+                <div id="fact-text"></div>
+            </div>
+            <button class="next-btn" id="next-btn" onclick="nextRound()">Следующий вопрос →</button>
+        </div>
+    </div>
+    <div class="result-overlay" id="result-overlay">
+        <div class="result-card">
+            <div class="result-emoji" id="result-emoji">🏆</div>
+            <h2>Игра окончена!</h2>
+            <div class="result-score" id="result-score">0</div>
+            <p class="result-detail" id="result-detail"></p>
+            <button class="restart-btn" onclick="restartGame()">🔄 Играть снова</button>
+        </div>
+    </div>
+    <script>
+    const flagSVGs = {
+      jp: `<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="600" fill="#fff"/><circle cx="450" cy="300" r="180" fill="#BC002D"/></svg>`,
+      br: `<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="600" fill="#009739"/><polygon points="450,60 840,300 450,540 60,300" fill="#FEDD00"/><circle cx="450" cy="300" r="100" fill="#012169"/><path d="M370 300 Q450 240 530 300" fill="none" stroke="#fff" stroke-width="8"/></svg>`,
+      de: `<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="200" fill="#000"/><rect y="200" width="900" height="200" fill="#DD0000"/><rect y="400" width="900" height="200" fill="#FFCC00"/></svg>`,
+      ca: `<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="600" fill="#FF0000"/><rect x="600" width="300" height="600" fill="#FF0000"/><rect x="300" width="300" height="600" fill="#fff"/><polygon points="450,120 460,200 400,200 430,240 420,300 450,260 480,300 470,240 500,200 440,200" fill="#FF0000"/></svg>`,
+      au: `<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="600" fill="#012169"/><polygon points="0,0 450,300 900,0 900,300" fill="#fff"/><polygon points="0,300 900,300 450,600" fill="#fff"/><polygon points="0,0 200,300 0,300" fill="#C8102E"/><polygon points="900,0 700,300 900,300" fill="#C8102E"/><polygon points="225,150 230,160 240,160 232,166 235,176 225,170 215,176 218,166 210,160 220,160" fill="#fff"/><circle cx="675" cy="450" r="20" fill="#fff"/><circle cx="600" cy="360" r="15" fill="#fff"/><circle cx="750" cy="360" r="15" fill="#fff"/><circle cx="675" cy="280" r="15" fill="#fff"/><circle cx="780" cy="480" r="12" fill="#fff"/></svg>`,
+      in: `<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="200" fill="#FF9933"/><rect y="200" width="900" height="200" fill="#fff"/><circle cx="450" cy="300" r="60" fill="none" stroke="#06038D" stroke-width="15"/><rect y="400" width="900" height="200" fill="#138808"/></svg>`,
+      mx: `<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="600" fill="#006847"/><rect x="300" width="300" height="600" fill="#fff"/><rect x="600" width="300" height="600" fill="#CE1126"/><circle cx="450" cy="300" r="50" fill="none" stroke="#8B4513" stroke-width="4"/><path d="M450 250 Q480 300 450 350 Q420 300 450 250Z" fill="#8B4513"/></svg>`,
+      it: `<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="600" fill="#008C45"/><rect x="300" width="300" height="600" fill="#fff"/><rect x="600" width="300" height="600" fill="#CD212A"/></svg>`,
+      fr: `<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="600" fill="#002395"/><rect x="300" width="300" height="600" fill="#fff"/><rect x="600" width="300" height="600" fill="#ED2939"/></svg>`,
+      es: `<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="150" fill="#AA151B"/><rect y="150" width="900" height="300" fill="#F1BF00"/><rect y="450" width="900" height="150" fill="#AA151B"/></svg>`,
+      kr: `<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="600" fill="#fff"/><circle cx="450" cy="300" r="100" fill="#CD2E3A"/><circle cx="450" cy="250" r="50" fill="#0047A0"/><circle cx="450" cy="350" r="50" fill="#CD2E3A"/></svg>`,
+      eg: `<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="200" fill="#CE1126"/><rect y="200" width="900" height="200" fill="#fff"/><rect y="400" width="900" height="200" fill="#000"/><polygon points="450,220 460,240 480,240 465,255 470,275 450,265 430,275 435,255 420,240 440,240" fill="#C09300"/></svg>`,
+      ar: `<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="200" fill="#75AADB"/><rect y="200" width="900" height="200" fill="#fff"/><rect y="400" width="900" height="200" fill="#75AADB"/><circle cx="450" cy="300" r="40" fill="#F4B61E"/></svg>`,
+      se: `<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="600" fill="#006AA7"/><rect x="150" width="100" height="600" fill="#FECC02"/><rect y="250" width="900" height="100" fill="#FECC02"/></svg>`,
+      tr: `<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="600" fill="#E30A17"/><circle cx="380" cy="300" r="120" fill="#fff"/><circle cx="410" cy="300" r="100" fill="#E30A17"/><polygon points="530,270 545,310 500,310" fill="#fff"/></svg>`,
+      no: `<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="600" fill="#BA0C2F"/><rect x="150" width="200" height="600" fill="#00205B"/><rect y="250" width="900" height="100" fill="#00205B"/><rect x="170" width="160" height="600" fill="#fff"/><rect y="270" width="900" height="60" fill="#fff"/></svg>`,
+      gr: `<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="66" fill="#0D5EAF"/><rect y="66" width="900" height="66" fill="#fff"/><rect y="132" width="900" height="66" fill="#0D5EAF"/><rect y="198" width="900" height="66" fill="#fff"/><rect y="264" width="900" height="66" fill="#0D5EAF"/><rect y="330" width="900" height="66" fill="#fff"/><rect y="396" width="900" height="66" fill="#0D5EAF"/><rect y="462" width="900" height="66" fill="#fff"/><rect y="528" width="900" height="72" fill="#0D5EAF"/><rect width="200" height="200" fill="#0D5EAF"/><rect x="60" width="80" height="200" fill="#fff"/><rect y="60" width="200" height="80" fill="#fff"/></svg>`,
+      ma: `<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="600" fill="#C1272D"/><polygon points="450,180 470,260 550,260 485,310 510,390 450,340 390,390 415,310 350,260 430,260" fill="none" stroke="#006233" stroke-width="12"/></svg>`,
+      th: `<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="100" fill="#A51931"/><rect y="100" width="900" height="100" fill="#F4F5F8"/><rect y="200" width="900" height="200" fill="#2D2A4A"/><rect y="400" width="900" height="100" fill="#F4F5F8"/><rect y="500" width="900" height="100" fill="#A51931"/></svg>`,
+      pl: `<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="300" fill="#fff"/><rect y="300" width="900" height="300" fill="#DC143C"/></svg>`,
+      cn: `<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="600" fill="#DE2910"/><polygon points="150,100 165,150 215,150 175,180 190,230 150,200 110,230 125,180 85,150 135,150" fill="#FFDE00"/><polygon points="250,80 255,95 270,95 260,105 265,120 250,110 235,120 240,105 230,95 245,95" fill="#FFDE00"/><polygon points="300,150 305,165 320,165 310,175 315,190 300,180 285,190 290,175 280,165 295,165" fill="#FFDE00"/><polygon points="300,230 305,245 320,245 310,255 315,270 300,260 285,270 290,255 280,245 295,245" fill="#FFDE00"/><polygon points="250,290 255,305 270,305 260,315 265,330 250,320 235,330 240,315 230,305 245,305" fill="#FFDE00"/></svg>`,
+      gb: `<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="600" fill="#012169"/><polygon points="0,0 450,300 900,0 900,300" fill="#fff"/><polygon points="0,300 900,300 450,600" fill="#fff"/><polygon points="0,0 200,300 0,300" fill="#C8102E"/><polygon points="900,0 700,300 900,300" fill="#C8102E"/><rect x="400" width="100" height="600" fill="#fff"/><rect y="250" width="900" height="100" fill="#fff"/><rect x="415" width="70" height="600" fill="#C8102E"/><rect y="265" width="900" height="70" fill="#C8102E"/></svg>`,
+      us: `<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="46" fill="#B22234"/><rect y="46" width="900" height="46" fill="#fff"/><rect y="92" width="900" height="46" fill="#B22234"/><rect y="138" width="900" height="46" fill="#fff"/><rect y="184" width="900" height="46" fill="#B22234"/><rect y="230" width="900" height="46" fill="#fff"/><rect y="276" width="900" height="46" fill="#B22234"/><rect y="322" width="900" height="46" fill="#fff"/><rect y="368" width="900" height="46" fill="#B22234"/><rect y="414" width="900" height="46" fill="#fff"/><rect y="460" width="900" height="46" fill="#B22234"/><rect y="506" width="900" height="46" fill="#fff"/><rect y="552" width="900" height="48" fill="#B22234"/><rect width="360" height="322" fill="#3C3B6E"/></svg>`,
+      pt: `<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="600" height="600" fill="#006600"/><rect x="600" width="300" height="600" fill="#FF0000"/><circle cx="600" cy="300" r="80" fill="#FFD100" stroke="#003399" stroke-width="8"/></svg>`,
+      nl: `<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="200" fill="#AE1C28"/><rect y="200" width="900" height="200" fill="#fff"/><rect y="400" width="900" height="200" fill="#21468B"/></svg>`,
+      ch: `<svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg"><rect width="600" height="600" fill="#FF0000"/><rect x="250" y="150" width="100" height="300" fill="#fff"/><rect x="150" y="250" width="300" height="100" fill="#fff"/></svg>`,
+      ng: `<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="600" fill="#008751"/><rect x="300" width="300" height="600" fill="#fff"/><rect x="600" width="300" height="600" fill="#008751"/></svg>`,
+      vn: `<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="600" fill="#DA251D"/><polygon points="450,120 490,280 650,280 520,380 560,540 450,440 340,540 380,380 250,280 410,280" fill="#FFFF00"/></svg>`,
+      cl: `<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="450" height="300" fill="#0039A6"/><rect x="450" width="450" height="300" fill="#fff"/><rect y="300" width="900" height="300" fill="#D52B1E"/><polygon points="150,50 165,120 230,120 175,160 195,230 150,190 105,230 125,160 70,120 135,120" fill="#fff"/></svg>`,
+      is: `<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="600" fill="#003897"/><rect x="150" width="200" height="600" fill="#DC1E35"/><rect y="250" width="900" height="100" fill="#DC1E35"/><rect x="170" width="160" height="600" fill="#fff"/><rect y="270" width="900" height="60" fill="#fff"/></svg>`,
+      fi: `<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="600" fill="#fff"/><rect x="150" width="100" height="600" fill="#003580"/><rect y="250" width="900" height="100" fill="#003580"/></svg>`,
+      ke: `<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="150" fill="#000"/><rect y="150" width="900" height="150" fill="#BB1600"/><rect y="300" width="900" height="150" fill="#fff"/><rect y="450" width="900" height="150" fill="#006B3F"/><ellipse cx="450" cy="300" rx="60" ry="80" fill="#BB1600" stroke="#000" stroke-width="6"/><line x1="450" y1="220" x2="450" y2="380" stroke="#fff" stroke-width="8"/></svg>`,
+      ir: `<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="200" fill="#239F40"/><rect y="200" width="900" height="200" fill="#fff"/><rect y="400" width="900" height="200" fill="#DA0000"/><text x="450" y="310" font-size="40" text-anchor="middle" fill="#DA0000">☽</text></svg>`,
+      co: `<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="900" height="300" fill="#FCD116"/><rect y="300" width="900" height="150" fill="#003893"/><rect y="450" width="900" height="150" fill="#CE1126"/></svg>`,
+      pe: `<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="600" fill="#D91023"/><rect x="300" width="300" height="600" fill="#fff"/><rect x="600" width="300" height="600" fill="#D91023"/></svg>`
+    };
+
+    const countries = [
+      { name: "Япония", code: "jp", capital: "Токио", continent: "Азия", hint: "Страна восходящего солнца", fact: "В Японии более 6800 островов, а поезда опаздывают в среднем всего на 18 секунд в год." },
+      { name: "Бразилия", code: "br", capital: "Бразилиа", continent: "Южная Америка", hint: "Самая большая страна Южной Америки", fact: "В Бразилии находится крупнейший тропический лес в мире — Амазония, производящий около 20% мирового кислорода." },
+      { name: "Германия", code: "de", capital: "Берлин", continent: "Европа", hint: "Чемпион мира по футболу 2014", fact: "В Германии существует более 1500 видов пива, а автобаны — единственные в Европе дороги без ограничения скорости на некоторых участках." },
+      { name: "Канада", code: "ca", capital: "Оттава", continent: "Северная Америка", hint: "На флаге — кленовый лист", fact: "В Канаде находится больше озёр, чем во всех остальных странах мира вместе взятых." },
+      { name: "Австралия", code: "au", capital: "Канберра", continent: "Океания", hint: "Континент-государство", fact: "В Австралии обитает более 80% животных и растений, которые не встречаются больше нигде на планете." },
+      { name: "Индия", code: "in", capital: "Нью-Дели", continent: "Азия", hint: "Вторая по населению страна мира", fact: "Индия подарила миру шахматы, число «ноль» и аюрведу. Здесь говорят более чем на 780 языках." },
+      { name: "Мексика", code: "mx", capital: "Мехико", continent: "Северная Америка", hint: "На гербе — орёл со змеей", fact: "Мексика — родина шоколада, кукурузы и томатов. Слово «шоколад» происходит от ацтекского «xocolātl»." },
+      { name: "Италия", code: "it", capital: "Рим", continent: "Европа", hint: "Флаг — зелёный, белый, красный", fact: "В Италии больше всего памятников ЮНЕСКО — 58 объектов. А Колизею почти 2000 лет." },
+      { name: "Франция", code: "fr", capital: "Париж", continent: "Европа", hint: "Город любви — столица", fact: "Эйфелева башня была построена за 2 года для Всемирной выставки 1889 года и задумывалась как временная конструкция." },
+      { name: "Испания", code: "es", capital: "Мадрид", continent: "Европа", hint: "Коррида и фламенко", fact: "Испания — второй по посещаемости туристами регион в мире. Здесь проходит самая крупная в мире «пищевая битва» — Ла Томатина." },
+      { name: "Южная Корея", code: "kr", capital: "Сеул", continent: "Азия", hint: "K-pop и Samsung родом отсюда", fact: "В Южной Корее самый быстрый интернет в мире, а корейцы съедают более 4 млрд порций лапши быстрого приготовления ежегодно." },
+      { name: "Египет", code: "eg", capital: "Каир", continent: "Африка", hint: "Страна фараонов и пирамид", fact: "Великая пирамида в Гизе — единственное из Семи чудес древнего мира, сохранившееся до наших дней. Её строили около 20 лет." },
+      { name: "Аргентина", code: "ar", capital: "Буэнос-Айрес", continent: "Южная Америка", hint: "Танго и Месси", fact: "Аргентина получила название от латинского «argentum» — серебро. Здесь находится самый южный город мира — Ушуайя." },
+      { name: "Швеция", code: "se", capital: "Стокгольм", continent: "Европа", hint: "Синий флаг с жёлтым крестом", fact: "Швеция — родина IKEA, Spotify и Нобелевской премии. Здесь можно увидеть северное сияние с сентября по март." },
+      { name: "Турция", code: "tr", capital: "Анкара", continent: "Азия/Европа", hint: "Мост между Европой и Азией", fact: "Стамбул — единственный город в мире, расположенный на двух континентах одновременно. Босфорский мост соединяет Европу и Азию." },
+      { name: "Норвегия", code: "no", capital: "Осло", continent: "Европа", hint: "Фьорды и викинги", fact: "Норвегия — родина фьордов. Береговая линия Норвегии с фьордами протянулась бы на 25000 км, если бы её выпрямить." },
+      { name: "Греция", code: "gr", capital: "Афины", continent: "Европа", hint: "Колыбель демократии", fact: "Древние Олимпийские игры зародились в Греции в 776 году до н.э. Греция — родина театра, демократии и философии." },
+      { name: "Марокко", code: "ma", capital: "Рабат", continent: "Африка", hint: "Красный флаг с зелёной звездой", fact: "В Марокко находится старейший в мире университет — Аль-Карауин в Фесе, основанный в 859 году." },
+      { name: "Таиланд", code: "th", capital: "Бангкок", continent: "Азия", hint: "Страна улыбок", fact: "Таиланд — единственная страна Юго-Восточной Азии, которая никогда не была европейской колонией. Его называют «Страной улыбок»." },
+      { name: "Польша", code: "pl", capital: "Варшава", continent: "Европа", hint: "Бело-красный флаг", fact: "Польша — родина Марии Кюри, Фредерика Шопена и Николая Коперника. Варшавский Старый город был полностью восстановлен после войны." },
+      { name: "Китай", code: "cn", capital: "Пекин", continent: "Азия", hint: "Красный флаг с пятью звёздами", fact: "Великая Китайская стена протянулась более чем на 21 000 км. Китай изобрёл бумагу, порох, компас и книгопечатание." },
+      { name: "Великобритания", code: "gb", capital: "Лондон", continent: "Европа", hint: "Юнион Джек", fact: "Лондонское метро — старейшее в мире, открыто в 1863 году. Британская монархия — одна из старейших непрерывных в мире." },
+      { name: "США", code: "us", capital: "Вашингтон", continent: "Северная Америка", hint: "50 звёзд на синем фоне", fact: "В США находится самый посещаемый национальный парк в мире — Большой Каньон, которому более 5 миллионов лет." },
+      { name: "Португалия", code: "pt", capital: "Лиссабон", continent: "Европа", hint: "Красно-зелёный флаг с гербом", fact: "Португалия — старейшее государство Европы с неизменными границами с 1139 года. Лиссабон старше Рима." },
+      { name: "Нидерланды", code: "nl", capital: "Амстердам", continent: "Европа", hint: "Оранжевый цвет и тюльпаны", fact: "Около 26% территории Нидерландов находится ниже уровня моря. Страна — мировой лидер по экспорту тюльпанов и сыра." },
+      { name: "Швейцария", code: "ch", capital: "Берн", continent: "Европа", hint: "Красный квадратный флаг с белым крестом", fact: "Швейцария не участвовала в войнах с 1815 года. Здесь находятся Альпы, а шоколадные плитки здесь изобретены именно в этой стране." },
+      { name: "Нигерия", code: "ng", capital: "Абуджа", continent: "Африка", hint: "Самая населённая страна Африки", fact: "Нигерия — самая населённая страна Африки (более 220 млн человек). Лагос — один из самых быстрорастущих городов мира." },
+      { name: "Вьетнам", code: "vn", capital: "Ханой", continent: "Азия", hint: "Красный флаг с жёлтой звездой", fact: "Вьетнам — второй в мире экспортёр кофе. Здесь находится крупнейшая в мире пещера — Шондонг." },
+      { name: "Чили", code: "cl", capital: "Сантьяго", continent: "Южная Америка", hint: "Похож на флаг Техаса", fact: "Чили — самая длинная и узкая страна мира, протяжённостью 4300 км. Здесь находится самое сухое место на Земле — пустыня Атакама." },
+      { name: "Исландия", code: "is", capital: "Рейкьявик", continent: "Европа", hint: "Огненная страна льда", fact: "Исландия — одна из самых малонаселённых стран мира. Практически вся энергия страны вырабатывается из геотермальных и гидроисточников." },
+      { name: "Финляндия", code: "fi", capital: "Хельсинки", continent: "Европа", hint: "Страна тысяч озёр", fact: "В Финляндии более 187 000 озёр и 179 000 островов. Финны — счастливейший народ мира по данным ООН уже несколько лет подряд." },
+      { name: "Кения", code: "ke", capital: "Найроби", continent: "Африка", hint: "Сафари и масаи", fact: "Кения — родина марафонского бега. Кенийские спортсмены доминируют в мировых марафонах уже несколько десятилетий." },
+      { name: "Иран", code: "ir", capital: "Тегеран", continent: "Азия", hint: "Бывшая Персия", fact: "Иран — родина древней Персии. Персидский ковёр считается одним из величайших произведений декоративно-прикладного искусства." },
+      { name: "Колумбия", code: "co", capital: "Богота", continent: "Южная Америка", hint: "Жёлтый, синий, красный", fact: "Колумбия — второй в мире производитель кофе и крупнейший производитель изумрудов. Здесь обитает около 20% видов птиц планеты." },
+      { name: "Перу", code: "pe", capital: "Лима", continent: "Южная Америка", hint: "Мачу-Пикчу", fact: "Мачу-Пикчу — затерянный город инков, обнаруженный только в 1911 году. Картофель был впервые одомашнен именно в Перу." }
+    ];
+
+    let currentRound = 0;
+    let totalRounds = 10;
+    let score = 0;
+    let streak = 0;
+    let maxStreak = 0;
+    let currentCountry = null;
+    let hintsUsed = 0;
+    let maxHints = 2;
+    let hintsRevealed = [];
+    let gameCountries = [];
+    let answered = false;
+
+    function shuffleArray(arr) {
+      const shuffled = [...arr];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    }
+
+    function initGame() {
+      gameCountries = shuffleArray(countries).slice(0, totalRounds);
+      currentRound = 0;
+      score = 0;
+      streak = 0;
+      maxStreak = 0;
+      updateUI();
+      loadRound();
+    }
+
+    function loadRound() {
+      answered = false;
+      hintsUsed = 0;
+      hintsRevealed = [];
+      currentCountry = gameCountries[currentRound];
+
+      document.getElementById('flag-box').innerHTML = flagSVGs[currentCountry.code];
+
+      let wrongOptions = countries.filter(c => c.name !== currentCountry.name);
+      wrongOptions = shuffleArray(wrongOptions).slice(0, 4);
+      let options = shuffleArray([currentCountry, ...wrongOptions]);
+
+      const optionsContainer = document.getElementById('options');
+      optionsContainer.innerHTML = '';
+
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.textContent = opt.name;
+        btn.onclick = () => selectAnswer(btn, opt);
+        optionsContainer.appendChild(btn);
+      });
+
+      const hintBtn = document.getElementById('hint-btn');
+      hintBtn.disabled = false;
+      document.getElementById('hints-left').textContent = maxHints;
+      document.getElementById('hint-display').classList.remove('visible');
+      document.getElementById('hint-display').innerHTML = '';
+
+      const factCard = document.getElementById('fact-card');
+      factCard.classList.remove('visible');
+      factCard.classList.remove('fact-correct', 'fact-wrong');
+
+      document.getElementById('next-btn').classList.remove('visible');
+    }
+
+    function selectAnswer(btn, selected) {
+      if (answered) return;
+      answered = true;
+
+      const allBtns = document.querySelectorAll('.option-btn');
+      allBtns.forEach(b => b.disabled = true);
+
+      const isCorrect = selected.name === currentCountry.name;
+
+      if (isCorrect) {
+        btn.classList.add('correct');
+        let points = 10;
+        if (hintsUsed === 0) points += 5;
+        else if (hintsUsed === 1) points += 2;
+        streak++;
+        if (streak > maxStreak) maxStreak = streak;
+        score += points;
+      } else {
+        btn.classList.add('wrong');
+        streak = 0;
+        allBtns.forEach(b => {
+          if (b.textContent === currentCountry.name) b.classList.add('correct');
+        });
+      }
+
+      // Show fact
+      const factCard = document.getElementById('fact-card');
+      factCard.className = 'fact-card visible ' + (isCorrect ? 'fact-correct' : 'fact-wrong');
+      document.getElementById('fact-text').innerHTML = `<strong>${currentCountry.name}:</strong> ${currentCountry.fact}`;
+
+      updateUI();
+
+      if (currentRound < totalRounds - 1) {
+        document.getElementById('next-btn').classList.add('visible');
+      } else {
+        setTimeout(showResults, 1200);
+      }
+    }
+
+    function showHint() {
+      if (hintsUsed >= maxHints || answered) return;
+      hintsUsed++;
+      document.getElementById('hints-left').textContent = maxHints - hintsUsed;
+
+      const hintDisplay = document.getElementById('hint-display');
+      hintDisplay.classList.add('visible');
+
+      const availableHints = [];
+      if (!hintsRevealed.includes('capital')) availableHints.push({ key: 'capital', text: `🏙️ Столица начинается на "${currentCountry.capital[0]}"` });
+      if (!hintsRevealed.includes('continent')) availableHints.push({ key: 'continent', text: `🌐 Континент: ${currentCountry.continent}` });
+      if (!hintsRevealed.includes('hint')) availableHints.push({ key: 'hint', text: `💬 ${currentCountry.hint}` });
+      if (!hintsRevealed.includes('letter')) availableHints.push({ key: 'letter', text: `🔤 Первая буква: "${currentCountry.name[0]}"` });
+
+      const remaining = availableHints.filter(h => !hintsRevealed.includes(h.key));
+
+      if (remaining.length > 0) {
+        const chosen = remaining[Math.floor(Math.random() * remaining.length)];
+        hintsRevealed.push(chosen.key);
+        hintDisplay.innerHTML = chosen.text;
+      }
+
+      if (hintsUsed >= maxHints) document.getElementById('hint-btn').disabled = true;
+    }
+
+    function nextRound() {
+      currentRound++;
+      loadRound();
+      updateUI();
+    }
+
+    function updateUI() {
+      document.getElementById('score').textContent = score;
+      document.getElementById('question-num').textContent = currentRound + 1;
+
+      const streakContainer = document.getElementById('streak-container');
+      if (streak >= 2) {
+        streakContainer.innerHTML = `🔥 Серия: ${streak} <span class="streak-badge">+${streak * 2} бонус</span>`;
+      } else {
+        streakContainer.innerHTML = '';
+      }
+    }
+
+    function showResults() {
+      const overlay = document.getElementById('result-overlay');
+      overlay.classList.add('visible');
+
+      document.getElementById('result-score').textContent = `${score} очков`;
+
+      let emoji, detail;
+      const percentage = score / (totalRounds * 15);
+      if (percentage >= 0.9) { emoji = '🏆'; detail = 'Невероятно! Вы настоящий географ!'; }
+      else if (percentage >= 0.7) { emoji = '🌟'; detail = 'Отличный результат! Так держать!'; }
+      else if (percentage >= 0.5) { emoji = '👍'; detail = 'Хорошо! Но есть куда расти.'; }
+      else if (percentage >= 0.3) { emoji = '📚'; detail = 'Неплохо, но стоит подучить географию.'; }
+      else { emoji = '🗺️'; detail = 'Попробуйте ещё раз — практика помогает!'; }
+
+      document.getElementById('result-emoji').textContent = emoji;
+      document.getElementById('result-detail').textContent = detail;
+    }
+
+    function restartGame() {
+      document.getElementById('result-overlay').classList.remove('visible');
+      initGame();
+    }
+
+    initGame();
+    </script>
+</body>
+</html>
+

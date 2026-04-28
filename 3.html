@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Спасение планеты 🌍</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration) ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.5); }
+        }
+
+        .game-container {
+            position: relative;
+            z-index: 1;
+            max-width: 700px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #00b4db, #0083b0, #00b09b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: none;
+            margin-bottom: 8px;
+        }
+
+        .header .subtitle {
+            color: #8ecae6;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .scene-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 24px;
+            padding: 40px 35px;
+            animation: fadeInUp 0.6s ease-out;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .scene-icon {
+            font-size: 4rem;
+            text-align: center;
+            margin-bottom: 20px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .scene-text {
+            color: #e8f4f8;
+            font-size: 1.15rem;
+            line-height: 1.8;
+            text-align: center;
+            margin-bottom: 35px;
+            font-weight: 600;
+        }
+
+        .scene-text .highlight {
+            color: #90e0ef;
+            font-weight: 800;
+        }
+
+        .choices {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .choice-btn {
+            background: linear-gradient(135deg, rgba(144, 224, 239, 0.15), rgba(72, 202, 228, 0.1));
+            border: 2px solid rgba(144, 224, 239, 0.25);
+            border-radius: 16px;
+            padding: 18px 24px;
+            color: #caf0f8;
+            font-family: 'Nunito', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .choice-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .choice-btn:hover::before {
+            left: 100%;
+        }
+
+        .choice-btn:hover {
+            background: linear-gradient(135deg, rgba(144, 224, 239, 0.3), rgba(72, 202, 228, 0.2));
+            border-color: rgba(144, 224, 239, 0.6);
+            transform: translateX(8px);
+            box-shadow: 0 8px 25px rgba(0, 180, 219, 0.2);
+        }
+
+        .choice-btn:active {
+            transform: translateX(8px) scale(0.98);
+        }
+
+        .choice-number {
+            background: linear-gradient(135deg, #00b4db, #0083b0);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 0.95rem;
+            flex-shrink: 0;
+        }
+
+        .progress-bar {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 25px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .progress-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.4s ease;
+        }
+
+        .progress-dot.active {
+            background: linear-gradient(135deg, #00b4db, #0083b0);
+            border-color: #00b4db;
+            box-shadow: 0 0 12px rgba(0, 180, 219, 0.5);
+        }
+
+        .progress-dot.completed {
+            background: #00b09b;
+            border-color: #00b09b;
+        }
+
+        /* Finale styles */
+        .finale-card {
+            text-align: center;
+        }
+
+        .finale-icon {
+            font-size: 5rem;
+            margin-bottom: 10px;
+            animation: finalePop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes finalePop {
+            from { transform: scale(0) rotate(-180deg); opacity: 0; }
+            to { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        .finale-title {
+            font-size: 1.8rem;
+            font-weight: 900;
+            margin-bottom: 15px;
+        }
+
+        .finale-title.excellent { color: #00b09b; }
+        .finale-title.good { color: #90e0ef; }
+        .finale-title.ok { color: #ffd166; }
+        .finale-title.funny { color: #ef476f; }
+
+        .finale-text {
+            color: #e8f4f8;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        .restart-btn {
+            background: linear-gradient(135deg, #00b4db, #0083b0);
+            border: none;
+            border-radius: 16px;
+            padding: 16px 40px;
+            color: white;
+            font-family: 'Nunito', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0, 180, 219, 0.3);
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0, 180, 219, 0.4);
+        }
+
+        .restart-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+            animation: confettiFall var(--fall-duration) linear forwards;
+        }
+
+        @keyframes confettiFall {
+            0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        .step-label {
+            text-align: center;
+            color: #8ecae6;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 { font-size: 1.8rem; }
+            .scene-card { padding: 28px 22px; }
+            .scene-text { font-size: 1rem; }
+            .choice-btn { padding: 14px 18px; font-size: 0.95rem; }
+            .finale-title { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    <div class="confetti-container" id="confetti-container"></div>
+
+    <div class="game-container">
+        <div class="header">
+            <h1>🌍 Спасение планеты</h1>
+            <div class="subtitle">Экологический квест для настоящих героев</div>
+        </div>
+
+        <div class="progress-bar" id="progress-bar">
+            <div class="progress-dot active" data-step="0"></div>
+            <div class="progress-dot" data-step="1"></div>
+            <div class="progress-dot" data-step="2"></div>
+            <div class="progress-dot" data-step="3"></div>
+            <div class="progress-dot" data-step="4"></div>
+        </div>
+
+        <div class="scene-card" id="scene-card">
+            <!-- Dynamic content -->
+        </div>
+    </div>
+
+    <script>
+        const scenes = {
+            start: {
+                icon: '🌍',
+                step: 0,
+                text: `Ты просыпаешься утром и выглянешь в окно... <span class="highlight">НЕБО ЗЕЛЁНОГО ЦВЕТА!</span> По телевизору диктор кричит: «Планета в опасности! Кто-нибудь, помогите!» Ты решаешь стать <span class="highlight">эко-героем</span>. С чего начнёшь?`,
+                choices: [
+                    { text: '🏃 Выбежать на улицу и начать собирать мусор', next: 'street' },
+                    { text: '📱 Написать пост в соцсетях о проблеме', next: 'social' },
+                    { text: '📞 Позвонить другу и вместе придумать план', next: 'friend' }
+                ]
+            },
+            street: {
+                icon: '🏘️',
+                step: 1,
+                text: `Ты выбежал на улицу и чуть не споткнулся о <span class="highlight">гору мусора</span>! Пластиковые бутылки, пакеты, банки — повсюду. Что будешь делать первым?`,
+                choices: [
+                    { text: '🗑️ Сортировать мусор и сдавать на переработку', next: 'finale_excellent' },
+                    { text: '📢 Развесить плакаты «Не мусорить!» по всему району', next: 'finale_good' },
+                    { text: '🎉 Устроить флешмоб по уборке и позвать всех жителей', next: 'finale_ok' }
+                ]
+            },
+            social: {
+                icon: '📱',
+                step: 1,
+                text: `Твой пост набрал <span class="highlight">МИЛЛИОН ЛАЙКОВ</span>! Весь интернет обсуждает проблему. Люди пишут: «Что нам делать?». Что ответишь?`,
+                choices: [
+                    { text: '♻️ «Сортируйте мусор! Пластик — в отдельный контейнер!»', next: 'finale_excellent' },
+                    { text: '🌳 «Сажайте деревья! Каждое дерево — это лёгкие планеты!»', next: 'finale_good' },
+                    { text: '🛍️ «Откажитесь от пластиковых пакетов — берите тканевые!»', next: 'finale_funny' }
+                ]
+            },
+            friend: {
+                icon: '🤝',
+                step: 1,
+                text: `Друг сказал: «Давай создадим <span class="highlight">эко-клуб в школе</span>! Вместе мы сила!» Что предложишь делать в первую очередь?`,
+                choices: [
+                    { text: '🗂️ Начнём с раздельного сбора мусора в школе!', next: 'finale_excellent' },
+                    { text: '🧹 Устроим большой субботник и уберём школьный двор!', next: 'finale_ok' },
+                    { text: '🎬 Снимем крутое видео и выложим в интернет!', next: 'finale_funny' }
+                ]
+            },
+            finale_excellent: {
+                icon: '🏆',
+                step: 4,
+                isFinale: true,
+                finaleType: 'excellent',
+                title: 'Финал 1: Планета спасена!',
+                text: `Ты и твои друзья убрали весь мусор, посадили деревья, наладили сортировку отходов, и <span class="highlight">небо снова стало голубым!</span> Тебе вручили медаль «Лучший эко-герой года»! Все аплодируют! 🎉✨<br><br>Планета говорит тебе: <span class="highlight">«Спасибо, маленький герой!»</span>`
+            },
+            finale_good: {
+                icon: '🌱',
+                step: 4,
+                isFinale: true,
+                finaleType: 'good',
+                title: 'Финал 2: Неплохо, но можно лучше!',
+                text: `Небо стало чуть голубее, но ещё не полностью. Люди начали задумываться об экологии, но многие пока ленятся. Ты <span class="highlight">молодец, что попытался!</span><br><br>В следующий раз стоит действовать ещё решительнее — и тогда точно получится! 💪🌿`
+            },
+            finale_ok: {
+                icon: '💪',
+                step: 4,
+                isFinale: true,
+                finaleType: 'ok',
+                title: 'Финал 3: Вместе мы сила!',
+                text: `Люди убрали немного мусора, но проблема осталась. Ты понял, что <span class="highlight">одному сложно</span> — нужна целая армия эко-героев!<br><br>Но ты не сдаёшься! Впереди ещё много работы, и ты знаешь: если каждый сделает хоть чуть-чуть, <span class="highlight">планета обязательно станет лучше!</span> 🌏`
+            },
+            finale_funny: {
+                icon: '🤷‍♂️',
+                step: 4,
+                isFinale: true,
+                finaleType: 'funny',
+                title: 'Финал 4: Зелёный — теперь модно!',
+                text: `Планета осталась зелёной... Но зато <span class="highlight">все теперь ходят в зелёной одежде</span> — это новый тренд! Ты подумал и решил: экология — это не только про цвет, но и про <span class="highlight">настоящие действия</span>.<br><br>В следующий раз точно получится! А пока... может, хотя бы бутылку в контейнер выбросить? 😄💚`
+            }
+        };
+
+        let currentScene = 'start';
+
+        function renderScene(sceneId) {
+            const scene = scenes[sceneId];
+            currentScene = sceneId;
+            const card = document.getElementById('scene-card');
+            const progressBar = document.getElementById('progress-bar');
+
+            // Update progress
+            updateProgress(scene.step);
+
+            card.style.animation = 'none';
+            card.offsetHeight; // trigger reflow
+            card.style.animation = 'fadeInUp 0.6s ease-out';
+
+            let html = '';
+
+            if (scene.isFinale) {
+                html = `
+                    <div class="finale-card">
+                        <div class="finale-icon">${scene.icon}</div>
+                        <div class="finale-title ${scene.finaleType}">${scene.title}</div>
+                        <div class="finale-text">${scene.text}</div>
+                        <button class="restart-btn" onclick="restartGame()">🔄 Пройти ещё раз</button>
+                    </div>
+                `;
+                if (scene.finaleType === 'excellent') {
+                    launchConfetti();
+                }
+            } else {
+                html = `
+                    <div class="step-label">Шаг ${scene.step + 1} из 3</div>
+                    <div class="scene-icon">${scene.icon}</div>
+                    <div class="scene-text">${scene.text}</div>
+                    <div class="choices">
+                        ${scene.choices.map((choice, i) => `
+                            <button class="choice-btn" onclick="makeChoice('${choice.next}')">
+                                <div class="choice-number">${i + 1}</div>
+                                <span>${choice.text}</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            card.innerHTML = html;
+        }
+
+        function updateProgress(step) {
+            const dots = document.querySelectorAll('.progress-dot');
+            dots.forEach((dot, index) => {
+                dot.classList.remove('active', 'completed');
+                if (index < step) {
+                    dot.classList.add('completed');
+                } else if (index === step) {
+                    dot.classList.add('active');
+                }
+            });
+        }
+
+        function makeChoice(nextScene) {
+            renderScene(nextScene);
+        }
+
+        function restartGame() {
+            const confettiContainer = document.getElementById('confetti-container');
+            confettiContainer.innerHTML = '';
+            renderScene('start');
+        }
+
+        function launchConfetti() {
+            const container = document.getElementById('confetti-container');
+            container.innerHTML = '';
+            const colors = ['#00b4db', '#00b09b', '#90e0ef', '#ffd166', '#ef476f', '#06d6a0', '#118ab2'];
+
+            for (let i = 0; i < 80; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.setProperty('--fall-duration', (2 + Math.random() * 3) + 's');
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                confetti.style.width = (6 + Math.random() * 8) + 'px';
+                confetti.style.height = (6 + Math.random() * 8) + 'px';
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+                container.appendChild(confetti);
+            }
+
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 6000);
+        }
+
+        // Create stars
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 60; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                const size = 1 + Math.random() * 3;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.setProperty('--duration', (2 + Math.random() * 4) + 's');
+                star.style.animationDelay = Math.random() * 4 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        createStars();
+        renderScene('start');
+    </script>
+</body>
+</html>
+

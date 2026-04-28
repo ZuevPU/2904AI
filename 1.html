@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Викторина «Колобок»</title>
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/lora@5.0.19/index.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Lora', serif;
+            background: linear-gradient(135deg, #fdf6e3 0%, #f5e6c8 50%, #e8d5a8 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .quiz-container {
+            max-width: 640px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 40px 36px;
+            box-shadow: 0 20px 60px rgba(139, 90, 43, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quiz-container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 6px;
+            background: repeating-linear-gradient(90deg, #f0a500, #f0a500 25%, #d4880a 25%, #d4880a 50%, #f0a500 50%, #f0a500 75%, #d4880a 75%, #d4880a 100%);
+            background-size: 60px 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .header-icon {
+            font-size: 60px;
+            animation: float 2.5s ease-in-out infinite;
+            display: inline-block;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(3deg); }
+        }
+
+        .header h1 {
+            font-size: 26px;
+            color: #5a3e1b;
+            margin-top: 6px;
+        }
+
+        .header p {
+            color: #8b7355;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 8px;
+            background: #e8d5a8;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f0a500, #d4880a);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .question-counter {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .question-counter span {
+            font-size: 13px;
+            color: #a08c6d;
+            font-weight: 600;
+        }
+
+        .question-text {
+            font-size: 20px;
+            color: #4a3520;
+            font-weight: 600;
+            line-height: 1.5;
+            margin-bottom: 22px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .option-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            background: #faf3e6;
+            border: 2px solid #e0d0b0;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Lora', serif;
+            font-size: 16px;
+            color: #5a3e1b;
+            text-align: left;
+            width: 100%;
+        }
+
+        .option-btn:hover:not(.disabled) {
+            background: #f5e6c8;
+            border-color: #d4a520;
+            transform: translateX(4px);
+        }
+
+        .option-btn.disabled {
+            cursor: default;
+        }
+
+        .option-btn.selected-correct {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .option-btn.selected-wrong {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+
+        .option-btn.show-correct {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .option-badge {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #e8d5a8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px;
+            color: #8b7355;
+            flex-shrink: 0;
+            transition: background 0.2s;
+        }
+
+        .option-btn.selected-correct .option-badge {
+            background: #28a745;
+            color: white;
+        }
+
+        .option-btn.selected-wrong .option-badge {
+            background: #dc3545;
+            color: white;
+        }
+
+        .option-btn.show-correct .option-badge {
+            background: #28a745;
+            color: white;
+        }
+
+        .feedback-box {
+            padding: 14px 16px;
+            border-radius: 12px;
+            margin-bottom: 18px;
+            font-size: 14px;
+            line-height: 1.5;
+            display: none;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .feedback-box.correct {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .feedback-box.wrong {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        .action-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #d4a520, #b8860b);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-family: 'Lora', serif;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 15px rgba(184, 134, 11, 0.3);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(184, 134, 11, 0.4);
+        }
+
+        .action-btn:active {
+            transform: translateY(0);
+        }
+
+        .action-btn.hidden {
+            display: none;
+        }
+
+        /* Start */
+        .screen-start p.desc {
+            color: #7a6645;
+            font-size: 15px;
+            line-height: 1.7;
+            margin: 20px 0 28px;
+        }
+
+        /* Result */
+        .screen-result {
+            text-align: center;
+        }
+
+        .screen-result .result-emoji {
+            font-size: 72px;
+            animation: float 2s ease-in-out infinite;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+
+        .screen-result .result-title {
+            font-size: 24px;
+            color: #5a3e1b;
+            margin-bottom: 8px;
+        }
+
+        .screen-result .result-score {
+            font-size: 44px;
+            font-weight: 700;
+            color: #d4a520;
+            margin: 14px 0 6px;
+        }
+
+        .screen-result .result-score small {
+            font-size: 22px;
+            color: #a08c6d;
+            font-weight: 400;
+        }
+
+        .screen-result .result-desc {
+            color: #7a6645;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .screen-start, .screen-quiz, .screen-result {
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+
+    <!-- ===== START ===== -->
+    <div id="screenStart" class="screen-start">
+        <div class="header">
+            <div class="header-icon">🟡</div>
+            <h1>Викторина «Колобок»</h1>
+            <p>Русская народная сказка</p>
+        </div>
+        <p class="desc">
+            Помните ли вы историю о весёлом колобке, который убежал из окна и встретил разных зверей в лесу? Ответьте на 3 вопроса и проверьте себя!
+        </p>
+        <button class="action-btn" id="btnStart">Начать викторину</button>
+    </div>
+
+    <!-- ===== QUIZ ===== -->
+    <div id="screenQuiz" class="screen-quiz hidden">
+        <div class="header" style="margin-bottom:16px">
+            <div class="header-icon" style="font-size:38px">🟡</div>
+        </div>
+        <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+        </div>
+        <div class="question-counter">
+            <span id="counterText">Вопрос 1 из 3</span>
+            <span id="scoreText">Счёт: 0</span>
+        </div>
+        <div class="question-text" id="questionText"></div>
+        <div class="options" id="optionsBox"></div>
+        <div class="feedback-box" id="feedbackBox"></div>
+        <button class="action-btn hidden" id="btnNext">Следующий вопрос →</button>
+    </div>
+
+    <!-- ===== RESULT ===== -->
+    <div id="screenResult" class="screen-result hidden">
+        <div class="result-emoji" id="resEmoji">🏆</div>
+        <div class="result-title" id="resTitle">Викторина завершена!</div>
+        <div class="result-score" id="resScore">0 <small>из 3</small></div>
+        <div class="result-desc" id="resDesc"></div>
+        <button class="action-btn" id="btnRestart">Пройти ещё раз</button>
+    </div>
+
+</div>
+
+<script>
+(function () {
+    const questions = [
+        {
+            q: "Из чего бабка испекла Колобка?",
+            opts: ["Из муки", "Из пшена", "Из творога", "Из мёда"],
+            ans: 0,
+            note: "Бабка поскребла по сусеку, намела муки и испекла Колобок."
+        },
+        {
+            q: "Кого первым встретил Колобок, когда убежал из дома?",
+            opts: ["Волка", "Медведя", "Зайца", "Лису"],
+            ans: 2,
+            note: "Первым на пути Колобка встретился Заяц."
+        },
+        {
+            q: "Кто в итоге съел Колобка?",
+            opts: ["Медведь", "Волк", "Лиса", "Никто — Колобок ушёл"],
+            ans: 2,
+            note: "Хитрая Лиса попросила Колобка сесть на язычок и съела его."
+        }
+    ];
+
+    const badges = ['А', 'Б', 'В', 'Г'];
+    let current = 0, score = 0, locked = false;
+
+    const $ = id => document.getElementById(id);
+
+    function show(id) {
+        ['screenStart', 'screenQuiz', 'screenResult'].forEach(s => {
+            $(s).classList.toggle('hidden', s !== id);
+        });
+    }
+
+    function render() {
+        locked = false;
+        const q = questions[current];
+
+        $('counterText').textContent = `Вопрос ${current + 1} из ${questions.length}`;
+        $('scoreText').textContent = `Счёт: ${score}`;
+        $('progressFill').style.width = `${((current) / questions.length) * 100}%`;
+        $('questionText').textContent = q.q;
+        $('feedbackBox').style.display = 'none';
+        $('btnNext').classList.add('hidden');
+
+        const box = $('optionsBox');
+        box.innerHTML = '';
+
+        q.opts.forEach((text, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerHTML = `<span class="option-badge">${badges[i]}</span><span>${text}</span>`;
+            btn.addEventListener('click', () => pick(i, btn));
+            box.appendChild(btn);
+        });
+    }
+
+    function pick(idx, btn) {
+        if (locked) return;
+        locked = true;
+
+        const q = questions[current];
+        const allBtns = $('optionsBox').querySelectorAll('.option-btn');
+
+        allBtns.forEach(b => b.classList.add('disabled'));
+
+        if (idx === q.ans) {
+            score++;
+            $('scoreText').textContent = `Счёт: ${score}`;
+            btn.classList.add('selected-correct');
+            $('feedbackBox').className = 'feedback-box correct';
+            $('feedbackBox').innerHTML = `✅ Верно! ${q.note}`;
+        } else {
+            btn.classList.add('selected-wrong');
+            allBtns[q.ans].classList.add('show-correct');
+            $('feedbackBox').className = 'feedback-box wrong';
+            $('feedbackBox').innerHTML = `❌ Неверно. ${q.note}`;
+        }
+
+        $('feedbackBox').style.display = 'block';
+
+        if (current < questions.length - 1) {
+            $('btnNext').textContent = 'Следующий вопрос →';
+        } else {
+            $('btnNext').textContent = 'Показать результат 🎉';
+        }
+        $('btnNext').classList.remove('hidden');
+    }
+
+    function showResult() {
+        show('screenResult');
+        $('progressFill').style.width = '100%';
+        $('resScore').innerHTML = `${score} <small>из ${questions.length}</small>`;
+
+        if (score === 3) {
+            $('resEmoji').textContent = '🏆';
+            $('resTitle').textContent = 'Отлично! Вы знаток сказки!';
+            $('resDesc').textContent = 'Все ответы верные — Колобок бы вами гордился!';
+        } else if (score === 2) {
+            $('resEmoji').textContent = '🌟';
+            $('resTitle').textContent = 'Хороший результат!';
+            $('resDesc').textContent = 'Вы хорошо помните сказку, но один ответ ускользнул.';
+        } else if (score === 1) {
+            $('resEmoji').textContent = '📖';
+            $('resTitle').textContent = 'Можно лучше!';
+            $('resDesc').textContent = 'Стоит перечитать сказку и попробовать снова!';
+        } else {
+            $('resEmoji').textContent = '🥺';
+            $('resTitle').textContent = 'Попробуйте ещё раз!';
+            $('resDesc').textContent = 'Колобок от вас убежал — перечитайте сказку!';
+        }
+    }
+
+    $('btnStart').addEventListener('click', () => {
+        current = 0; score = 0;
+        show('screenQuiz');
+        render();
+    });
+
+    $('btnNext').addEventListener('click', () => {
+        current++;
+        if (current < questions.length) {
+            render();
+        } else {
+            showResult();
+        }
+    });
+
+    $('btnRestart').addEventListener('click', () => {
+        current = 0; score = 0;
+        show('screenQuiz');
+        render();
+    });
+})();
+</script>
+
+</body>
+</html>
+
