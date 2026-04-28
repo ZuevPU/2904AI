@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Кто хочет стать отличником? — Муму</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --blue-50: #eff6ff; --blue-100: #dbeafe; --blue-200: #bfdbfe; --blue-300: #93c5fd; --blue-400: #60a5fa; --blue-500: #3b82f6; --blue-600: #2563eb; --blue-700: #1d4ed8; --blue-800: #1e40af; --blue-900: #1e3a8a;
+    --gray-50: #f9fafb; --gray-100: #f3f4f6; --gray-200: #e5e7eb; --gray-300: #d1d5db; --gray-400: #9ca3af; --gray-500: #6b7280; --gray-600: #4b5563; --gray-700: #374151; --gray-800: #1f2937; --gray-900: #111827;
+    --green-500: #22c55e; --green-600: #16a34a; --green-700: #15803d; --red-500: #ef4444; --red-600: #dc2626; --red-700: #b91c1c; --orange-500: #f97316; --orange-600: #ea580c;
+    --white: #ffffff; --shadow: 0 4px 12px rgba(0,0,0,0.1); --shadow-lg: 0 8px 24px rgba(0,0,0,0.15); --radius: 12px; --transition: 0.3s ease;
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background: var(--gray-100); color: var(--gray-800); min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px; line-height: 1.5; }
+  .screen { display: none; width: 100%; max-width: 800px; animation: fadeIn 0.4s ease; }
+  .screen.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+  @keyframes bounceIn { 0% { transform: scale(0.3); opacity: 0; } 50% { transform: scale(1.05); } 70% { transform: scale(0.9); } 100% { transform: scale(1); opacity: 1; } }
+  @keyframes correctFlash { 0% { background: var(--green-500); } 100% { background: var(--green-600); } }
+  @keyframes wrongFlash { 0% { background: var(--red-500); } 100% { background: var(--red-600); } }
+  .start-screen { text-align: center; background: var(--white); border-radius: var(--radius); padding: 40px 32px; box-shadow: var(--shadow-lg); }
+  .start-screen h1 { font-size: clamp(1.3rem, 4vw, 2rem); color: var(--blue-700); margin-bottom: 8px; font-weight: 800; }
+  .start-screen .subtitle { font-size: clamp(0.9rem, 2.5vw, 1.1rem); color: var(--gray-500); margin-bottom: 28px; }
+  .start-screen .logo-icon { font-size: 4rem; margin-bottom: 16px; display: block; animation: pulse 2s infinite; }
+  .info-box { background: var(--blue-50); border: 1px solid var(--blue-200); border-radius: var(--radius); padding: 16px; margin-bottom: 24px; text-align: left; }
+  .info-box h3 { color: var(--blue-700); font-size: 0.95rem; margin-bottom: 8px; }
+  .info-box ul { list-style: none; font-size: 0.88rem; color: var(--gray-600); }
+  .info-box ul li { padding: 3px 0; position: relative; padding-left: 18px; }
+  .info-box ul li::before { content: '✓'; position: absolute; left: 0; color: var(--blue-500); font-weight: bold; }
+  .grade-system-box { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 14px; margin-bottom: 24px; text-align: center; }
+  .grade-system-box p { font-size: 0.85rem; color: var(--gray-500); margin-bottom: 8px; }
+  .grade-scale { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; font-size: 0.75rem; font-weight: 600; color: var(--gray-600); }
+  .grade-scale span { background: var(--blue-100); color: var(--blue-700); padding: 3px 8px; border-radius: 4px; }
+  .grade-scale .gs-end { background: var(--orange-500); color: var(--white); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 32px; font-size: 1rem; font-weight: 600; border: none; border-radius: var(--radius); cursor: pointer; transition: all var(--transition); outline: none; font-family: inherit; }
+  .btn:focus-visible { box-shadow: 0 0 0 3px var(--blue-300); }
+  .btn-primary { background: linear-gradient(135deg, var(--blue-500), var(--blue-700)); color: var(--white); box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-secondary { background: var(--gray-200); color: var(--gray-700); }
+  .btn-secondary:hover { background: var(--gray-300); }
+  .btn-success { background: linear-gradient(135deg, var(--green-500), var(--green-700)); color: var(--white); }
+  .btn-success:hover { transform: translateY(-2px); }
+  .btn-group { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  .game-screen { display: flex; flex-direction: column; gap: 16px; }
+  .top-bar { display: flex; justify-content: space-between; align-items: center; background: var(--white); border-radius: var(--radius); padding: 12px 16px; box-shadow: var(--shadow); }
+  .question-counter { font-size: 0.85rem; color: var(--gray-500); font-weight: 500; }
+  .current-grade { font-size: 1.1rem; font-weight: 700; color: var(--blue-700); }
+  .current-grade .grade-badge { display: inline-block; background: var(--blue-600); color: var(--white); padding: 2px 12px; border-radius: 6px; font-size: 1rem; }
+  .hints-bar { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .hint-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 80px; height: 64px; border: 2px solid var(--blue-200); background: var(--white); border-radius: var(--radius); cursor: pointer; transition: all var(--transition); font-size: 0.7rem; color: var(--gray-600); font-family: inherit; font-weight: 500; outline: none; }
+  .hint-btn .hint-icon { font-size: 1.4rem; margin-bottom: 2px; }
+  .hint-btn:hover:not(:disabled) { border-color: var(--blue-500); background: var(--blue-50); }
+  .hint-btn:focus-visible { box-shadow: 0 0 0 3px var(--blue-300); }
+  .hint-btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: var(--gray-300); }
+  .game-main { display: flex; gap: 16px; align-items: flex-start; }
+  .question-area { flex: 1; min-width: 0; }
+  .grade-ladder { width: 200px; flex-shrink: 0; background: var(--white); border-radius: var(--radius); padding: 12px; box-shadow: var(--shadow); }
+  .grade-ladder h3 { font-size: 0.8rem; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; text-align: center; }
+  .ladder-step { display: flex; justify-content: space-between; align-items: center; padding: 5px 8px; border-radius: 6px; font-size: 0.78rem; transition: all var(--transition); color: var(--gray-500); }
+  .ladder-step.current { background: var(--blue-600); color: var(--white); font-weight: 700; animation: pulse 1.5s infinite; }
+  .ladder-step.passed { color: var(--green-600); font-weight: 600; }
+  .ladder-step.milestone { color: var(--orange-600); font-weight: 700; }
+  .ladder-step.milestone.passed { color: var(--green-700); }
+  .ladder-step.milestone.current { background: var(--orange-600); }
+  .ladder-num { font-weight: 600; margin-right: 6px; }
+  .ladder-grade { font-weight: 700; }
+  .question-card { background: linear-gradient(135deg, var(--blue-600), var(--blue-800)); border-radius: var(--radius); padding: 28px 24px; color: var(--white); text-align: center; box-shadow: var(--shadow-lg); margin-bottom: 16px; min-height: 120px; display: flex; align-items: center; justify-content: center; }
+  .question-card .q-type { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; margin-bottom: 8px; }
+  .question-card .q-text { font-size: clamp(1rem, 3vw, 1.25rem); font-weight: 600; line-height: 1.5; }
+  .answers-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .answer-btn { display: flex; align-items: center; gap: 12px; padding: 16px; background: var(--white); border: 2px solid var(--gray-200); border-radius: var(--radius); cursor: pointer; transition: all var(--transition); font-size: 0.95rem; color: var(--gray-700); font-family: inherit; font-weight: 500; text-align: left; outline: none; position: relative; overflow: hidden; }
+  .answer-btn .answer-letter { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: var(--blue-100); color: var(--blue-700); font-weight: 700; font-size: 0.85rem; flex-shrink: 0; transition: all var(--transition); }
+  .answer-btn:hover:not(:disabled) { border-color: var(--blue-400); background: var(--blue-50); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15); }
+  .answer-btn:hover:not(:disabled) .answer-letter { background: var(--blue-500); color: var(--white); }
+  .answer-btn.selected { border-color: var(--orange-500); background: #fff7ed; animation: pulse 0.6s; }
+  .answer-btn.selected .answer-letter { background: var(--orange-500); color: var(--white); }
+  .answer-btn.correct { border-color: var(--green-500); background: #f0fdf4; animation: correctFlash 0.5s ease; }
+  .answer-btn.correct .answer-letter { background: var(--green-500); color: var(--white); }
+  .answer-btn.wrong { border-color: var(--red-500); background: #fef2f2; animation: wrongFlash 0.5s ease; }
+  .answer-btn.wrong .answer-letter { background: var(--red-500); color: var(--white); }
+  .answer-btn:disabled { cursor: not-allowed; opacity: 0.6; }
+  .answer-btn.hidden-5050 { opacity: 0.25; pointer-events: none; border-color: transparent; background: var(--gray-100); }
+  .take-money-btn { margin-top: 12px; text-align: center; }
+  .btn-take-money { background: var(--gray-200); color: var(--gray-600); padding: 10px 24px; font-size: 0.85rem; border-radius: 8px; }
+  .btn-take-money:hover { background: var(--gray-300); color: var(--gray-700); }
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center; padding: 16px; animation: fadeIn 0.2s ease; }
+  .modal-overlay.active { display: flex; }
+  .modal { background: var(--white); border-radius: var(--radius); padding: 32px; max-width: 420px; width: 100%; box-shadow: var(--shadow-lg); text-align: center; animation: bounceIn 0.4s ease; }
+  .modal h2 { font-size: 1.3rem; color: var(--gray-800); margin-bottom: 8px; }
+  .modal p { color: var(--gray-500); margin-bottom: 20px; font-size: 0.95rem; }
+  .friend-response { background: var(--blue-50); border: 1px solid var(--blue-200); border-radius: 8px; padding: 16px; margin: 16px 0; text-align: left; font-size: 0.9rem; color: var(--gray-700); line-height: 1.6; }
+  .friend-response .friend-name { font-weight: 700; color: var(--blue-700); }
+  .audience-chart { display: flex; align-items: flex-end; justify-content: center; gap: 16px; height: 140px; margin: 16px 0; padding: 0 8px; }
+  .audience-bar-wrapper { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; max-width: 60px; }
+  .audience-bar { width: 100%; border-radius: 6px 6px 0 0; background: linear-gradient(to top, var(--blue-500), var(--blue-400)); transition: height 0.8s ease; min-height: 4px; }
+  .audience-bar.highlight { background: linear-gradient(to top, var(--green-600), var(--green-500)); }
+  .audience-label { font-size: 0.75rem; font-weight: 700; color: var(--gray-600); }
+  .audience-percent { font-size: 0.7rem; color: var(--gray-400); font-weight: 600; }
+  .end-screen { text-align: center; background: var(--white); border-radius: var(--radius); padding: 40px 32px; box-shadow: var(--shadow-lg); }
+  .end-screen .end-icon { font-size: 3.5rem; display: block; margin-bottom: 16px; }
+  .end-screen h2 { font-size: 1.6rem; color: var(--gray-800); margin-bottom: 8px; }
+  .end-screen .end-grade { font-size: 2.5rem; font-weight: 800; color: var(--blue-700); margin: 12px 0; display: inline-block; background: var(--blue-100); padding: 8px 28px; border-radius: 12px; }
+  .end-screen .end-subtitle { color: var(--gray-500); font-size: 0.95rem; margin-bottom: 20px; }
+  .stats-row { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .stat-item { text-align: center; }
+  .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--blue-700); }
+  .stat-label { font-size: 0.75rem; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.5px; }
+  @media (max-width: 700px) {
+    .game-main { flex-direction: column; }
+    .grade-ladder { width: 100%; display: flex; flex-wrap: wrap; gap: 4px; padding: 8px; }
+    .grade-ladder h3 { width: 100%; }
+    .ladder-step { flex: 0 0 auto; padding: 3px 8px; font-size: 0.7rem; }
+    .answers-grid { grid-template-columns: 1fr; }
+    .question-card { padding: 20px 16px; }
+    .hint-btn { width: 70px; height: 56px; font-size: 0.65rem; }
+  }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<section id="startScreen" class="screen active">
+  <div class="start-screen">
+    <span class="logo-icon">🏆</span>
+    <h1>Кто хочет стать отличником?</h1>
+    <p class="subtitle">Викторина по рассказу И.С. Тургенева «Муму»</p>
+    <div class="info-box">
+      <h3>📋 Правила игры</h3>
+      <ul>
+        <li>15 вопросов с нарастающей сложностью</li>
+        <li>4 варианта ответа — выбери один правильный</li>
+        <li>3 подсказки: 50:50, звонок другу, помощь зала</li>
+        <li>Несгораемая оценка на 5-м вопросе — «3»</li>
+        <li>Можно забрать оценку и выйти из игры</li>
+      </ul>
+    </div>
+    <div class="grade-system-box">
+      <p>Шкала оценок (от вопроса к вопросу):</p>
+      <div class="grade-scale" id="gradeScaleDisplay"></div>
+    </div>
+    <button class="btn btn-primary" id="btnNewGame">🎮 Начать игру</button>
+  </div>
+</section>
+<section id="gameScreen" class="screen">
+  <div class="game-screen">
+    <div class="top-bar">
+      <span class="question-counter" id="questionCounter">Вопрос 1 из 15</span>
+      <span class="current-grade">Оценка: <span class="grade-badge" id="gradeBadge">2</span></span>
+    </div>
+    <div class="hints-bar">
+      <button class="hint-btn" id="hint5050"><span class="hint-icon">✂️</span><span>50:50</span></button>
+      <button class="hint-btn" id="hintPhone"><span class="hint-icon">📞</span><span>Звонок</span></button>
+      <button class="hint-btn" id="hintAudience"><span class="hint-icon">👥</span><span>Зал</span></button>
+    </div>
+    <div class="game-main">
+      <div class="question-area">
+        <div class="question-card"><div><div class="q-type" id="qType">На внимание</div><div class="q-text" id="qText">Загрузка вопроса...</div></div></div>
+        <div class="answers-grid" id="answersGrid"></div>
+        <div class="take-money-btn"><button class="btn btn-take-money" id="btnTakeMoney">📝 Забрать оценку и выйти</button></div>
+      </div>
+      <nav class="grade-ladder"><h3>Оценки</h3><div id="ladderSteps"></div></nav>
+    </div>
+  </div>
+</section>
+<section id="endScreen" class="screen">
+  <div class="end-screen">
+    <span class="end-icon" id="endIcon">🏆</span>
+    <h2 id="endTitle">Поздравляем!</h2>
+    <div class="end-grade" id="endGradeBadge">5</div>
+    <p class="end-subtitle" id="endSubtitle">Вы стали отличником!</p>
+    <div class="stats-row">
+      <div class="stat-item"><div class="stat-value" id="statCorrect">0</div><div class="stat-label">Правильных</div></div>
+      <div class="stat-item"><div class="stat-value" id="statWrong">0</div><div class="stat-label">Ошибок</div></div>
+      <div class="stat-item"><div class="stat-value" id="statHints">0</div><div class="stat-label">Подсказок</div></div>
+    </div>
+    <button class="btn btn-primary" id="btnPlayAgain">🔄 Играть снова</button>
+  </div>
+</section>
+<script>
+(function () {
+  'use strict';
+  const GRADES = ['2', '2+', '2½', '3−', '3', '3+', '3½', '4−', '4', '4+', '4½', '5−', '5', '5+', '5★'];
+  const MILESTONE_1 = 4;
+  const LETTERS = ['A', 'B', 'C', 'D'];
+  const QUESTIONS = [
+    { type: 'На внимание', text: 'Как звали главного героя рассказа И.С. Тургенева «Муму»?', answers: ['Герасим', 'Гаврила', 'Степан', 'Антон'], correct: 0 },
+    { type: 'На внимание', text: 'Каким был Герасим по физической природе?', answers: ['Худым и слабым', 'Высоким и тучным, богатырского сложения', 'Среднего роста, обыкновенным', 'Маленьким и тщедушным'], correct: 1 },
+    { type: 'На внимание', text: 'Какую должность занимал Герасим в доме барыни?', answers: ['Повар', 'Кучер', 'Дворник', 'Садовник'], correct: 2 },
+    { type: 'На внимание', text: 'Каким физическим недостатком страдал Герасим?', answers: ['Был слепым', 'Был глухонемым', 'Был хромым', 'Был немым, но слышал'], correct: 1 },
+    { type: 'На внимание', text: 'Кого Герасим нашёл и спас в самом начале рассказа?', answers: ['Котёнка', 'Щенка', 'Утёнка', 'Ребёнка'], correct: 1 },
+    { type: 'На понимание', text: 'Как Герасим назвал свою собачку?', answers: ['Бобик', 'Жучка', 'Муму', 'Шарик'], correct: 2 },
+    { type: 'На понимание', text: 'Почему барыня приказала избавиться от Муму?', answers: ['Собака была больной', 'Собака залаяла, когда барыня была в дурном настроении', 'Герасим не ухаживал за собакой', 'Собака испортила мебель в доме'], correct: 1 },
+    { type: 'На понимание', text: 'Как барыня относилась к своим крепостным крестьянам?', answers: ['С уважением и заботой', 'Как к равным себе', 'Как к своей собственности, капризно и деспотично', 'Не обращала на них внимания'], correct: 2 },
+    { type: 'На понимание', text: 'Что сделал Герасим, получив приказ избавиться от Муму?', answers: ['Спрятал собаку в лесу', 'Утопил Муму в реке, выполняя приказ', 'Отдал Муму другому крестьянину', 'Убежал вместе с Муму'], correct: 1 },
+    { type: 'На понимание', text: 'Какой поступок совершил Герасим сразу после смерти Муму?', answers: ['Попросил прощения у барыни', 'Ушёл пешком в свою родную деревню', 'Стал пьянствовать', 'Остался работать у барыни'], correct: 1 },
+    { type: 'На размышление', text: 'Почему Герасим не мог просто ослушаться барыни и не отдать Муму?', answers: ['Он боялся других крестьян', 'Он был крепостным и полностью зависим от воли барыни', 'Он не любил Муму', 'Барыня заплатила ему денег'], correct: 1 },
+    { type: 'На размышление', text: 'Что символизирует образ Муму в рассказе Тургенева?', answers: ['Богатство и роскошь', 'Беззащитность, чистую любовь и жертвенность', 'Свободу и независимость', 'Хитрость и ум'], correct: 1 },
+    { type: 'На размышление', text: 'Какой социальный контекст отражён в рассказе «Муму»?', answers: ['Жизнь дворян в Петербурге', 'Крепостное право и бесправие крестьян в России', 'Революционные настроения 19 века', 'Торговля и купечество'], correct: 1 },
+    { type: 'На размышление', text: 'В чём заключается значение финала — ухода Герасима в деревню?', answers: ['Герасим просто соскучился по дому', 'Это акт немого протеста и обретение внутренней свободы', 'Герасим решил вернуться за деньгами', 'Барыня сама отпустила его с подарками'], correct: 1 },
+    { type: 'На размышление', text: 'Какова главная идея рассказа «Муму»?', answers: ['Нужно заботиться о домашних животных', 'Критика крепостного права и утверждение человеческого достоинства', 'Деревенская жизнь лучше городской', 'Любовь побеждает всё'], correct: 1 }
+  ];
+  const startScreen = document.getElementById('startScreen');
+  const gameScreen = document.getElementById('gameScreen');
+  const endScreen = document.getElementById('endScreen');
+  const btnNewGame = document.getElementById('btnNewGame');
+  const btnPlayAgain = document.getElementById('btnPlayAgain');
+  const qType = document.getElementById('qType');
+  const qText = document.getElementById('qText');
+  const answersGrid = document.getElementById('answersGrid');
+  const questionCounter = document.getElementById('questionCounter');
+  const gradeBadge = document.getElementById('gradeBadge');
+  const ladderSteps = document.getElementById('ladderSteps');
+  const gradeScaleDisplay = document.getElementById('gradeScaleDisplay');
+  const statCorrect = document.getElementById('statCorrect');
+  const statWrong = document.getElementById('statWrong');
+  const statHints = document.getElementById('statHints');
+  const endGradeBadge = document.getElementById('endGradeBadge');
+  const endTitle = document.getElementById('endTitle');
+  const endSubtitle = document.getElementById('endSubtitle');
+  const hintButtons = [document.getElementById('hint5050'), document.getElementById('hintPhone'), document.getElementById('hintAudience')];
+  let state = { idx: 0, correct: 0, wrong: 0, hints: 0, eliminated: [] };
+  function showScreen(el) { [startScreen, gameScreen, endScreen].forEach((s) => s.classList.remove('active')); el.classList.add('active'); }
+  function buildGradeScale() { gradeScaleDisplay.innerHTML = ''; GRADES.forEach((g, i) => { const s = document.createElement('span'); s.textContent = g; if (i === GRADES.length - 1) s.className = 'gs-end'; gradeScaleDisplay.appendChild(s); }); }
+  function buildLadder() { ladderSteps.innerHTML = ''; for (let i = GRADES.length - 1; i >= 0; i--) { const d = document.createElement('div'); d.id = 'ladder-' + i; d.className = 'ladder-step' + (i === MILESTONE_1 ? ' milestone' : ''); d.innerHTML = '<span class="ladder-num">' + (i + 1) + '</span><span class="ladder-grade">' + GRADES[i] + '</span>'; ladderSteps.appendChild(d);} }
+  function updateLadder() { for (let i = 0; i < GRADES.length; i++) { const el = document.getElementById('ladder-' + i); if (!el) continue; el.classList.remove('current', 'passed'); if (i === state.idx) el.classList.add('current'); else if (i < state.idx) el.classList.add('passed'); } }
+  function renderQuestion() {
+    if (state.idx >= QUESTIONS.length) return endGame(true);
+    const q = QUESTIONS[state.idx];
+    questionCounter.textContent = 'Вопрос ' + (state.idx + 1) + ' из ' + QUESTIONS.length;
+    gradeBadge.textContent = GRADES[state.idx];
+    qType.textContent = q.type;
+    qText.textContent = q.text;
+    answersGrid.innerHTML = '';
+    q.answers.forEach((a, i) => {
+      const b = document.createElement('button');
+      b.className = 'answer-btn';
+      b.innerHTML = '<span class="answer-letter">' + LETTERS[i] + '</span><span class="answer-text">' + a + '</span>';
+      if (state.eliminated.includes(i)) { b.classList.add('hidden-5050'); b.disabled = true; }
+      b.addEventListener('click', () => handleAnswer(i, b));
+      answersGrid.appendChild(b);
+    });
+    updateLadder();
+  }
+  function handleAnswer(index, btn) {
+    const q = QUESTIONS[state.idx];
+    const all = answersGrid.querySelectorAll('.answer-btn');
+    all.forEach((b) => { b.disabled = true; });
+    if (index === q.correct) {
+      btn.classList.add('correct');
+      state.correct++;
+      setTimeout(() => { state.idx++; state.eliminated = []; renderQuestion(); }, 900);
+    } else {
+      btn.classList.add('wrong');
+      all[q.correct].classList.add('correct');
+      state.wrong++;
+      setTimeout(() => endGame(false), 1200);
+    }
+  }
+  function useFifty() {
+    const q = QUESTIONS[state.idx];
+    const wrong = [0, 1, 2, 3].filter((i) => i !== q.correct).sort(() => Math.random() - 0.5).slice(0, 2);
+    state.eliminated = wrong;
+    state.hints++;
+    hintButtons[0].disabled = true;
+    renderQuestion();
+  }
+  function endGame(won) {
+    endGradeBadge.textContent = won ? GRADES[GRADES.length - 1] : (state.idx > MILESTONE_1 ? GRADES[MILESTONE_1] : '2');
+    endTitle.textContent = won ? 'Поздравляем! Вы — отличник!' : 'Игра окончена';
+    endSubtitle.textContent = won ? 'Вы прошли все 15 вопросов!' : 'Попробуйте снова';
+    statCorrect.textContent = String(state.correct);
+    statWrong.textContent = String(state.wrong);
+    statHints.textContent = String(state.hints);
+    showScreen(endScreen);
+  }
+  function startGame() { state = { idx: 0, correct: 0, wrong: 0, hints: 0, eliminated: [] }; hintButtons.forEach((b) => { b.disabled = false; }); buildLadder(); renderQuestion(); showScreen(gameScreen); }
+  btnNewGame.addEventListener('click', startGame);
+  btnPlayAgain.addEventListener('click', () => showScreen(startScreen));
+  document.getElementById('hint5050').addEventListener('click', useFifty);
+  document.getElementById('hintPhone').addEventListener('click', () => { hintButtons[1].disabled = true; state.hints++; });
+  document.getElementById('hintAudience').addEventListener('click', () => { hintButtons[2].disabled = true; state.hints++; });
+  document.getElementById('btnTakeMoney').addEventListener('click', () => endGame(false));
+  buildGradeScale();
+  buildLadder();
+})();
+</script>
+</body>
+</html>
