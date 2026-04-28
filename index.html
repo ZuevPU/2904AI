@@ -331,110 +331,6 @@
       <section class="stage" data-stage="2" aria-labelledby="stage3Title">
         <h2 id="stage3Title">Этап 3. От слов к делу</h2>
         <article class="card">
-          <h3>🧮 Формула идеального промта</h3>
-          <p class="formula">`Роль + Задача + Контекст + Формат + Ограничения`</p>
-          <p>Пример: «Ты — методист по истории. Создай интерактивную хронологическую ленту по теме "Петровские реформы"
-            для 7 класса. Формат: 8 событий с датами, кратким описанием и вопросом на анализ. Сложность — базовая»</p>
-          <div class="prompt-builder prompt-builder-v2">
-            <h4>Интерактивный конструктор промпта</h4>
-
-            <div class="builder-section" data-builder-section="role">
-              <h5>Роль</h5>
-              <div class="builder-options">
-                <button type="button" class="btn builder-option" data-builder-target="roleInput">Ты — учитель</button>
-                <button type="button" class="btn builder-option" data-builder-target="roleInput">Ты — методист</button>
-                <button type="button" class="btn builder-option" data-builder-target="roleInput">Ты — классный
-                  руководитель</button>
-                <button type="button" class="btn builder-option" data-builder-target="roleInput">Ты — тьютор</button>
-              </div>
-              <label>Свой вариант роли
-                <input type="text" id="roleInput" placeholder="Ты — ...">
-              </label>
-            </div>
-
-            <div class="builder-section" data-builder-section="task">
-              <h5>Задача</h5>
-              <div class="builder-options">
-                <button type="button" class="btn builder-option" data-builder-target="taskInput">Создай интерактивный рабочий лист</button>
-                <button type="button" class="btn builder-option" data-builder-target="taskInput">Создай игру «Кто хочет стать миллионером?»</button>
-                <button type="button" class="btn builder-option" data-builder-target="taskInput">Создай викторину</button>
-                <button type="button" class="btn builder-option" data-builder-target="taskInput">Создай задание на сопоставление</button>
-              </div>
-              <label>Свой вариант задачи
-                <input type="text" id="taskInput" placeholder="Создай ...">
-              </label>
-            </div>
-
-            <div class="builder-section" data-builder-section="context">
-              <h5>Контекст</h5>
-              <div class="builder-options">
-                <button type="button" class="btn builder-option" data-builder-target="contextInput">Для 5 класса, тема:
-                  Дроби, цель — закрепление материала</button>
-                <button type="button" class="btn builder-option" data-builder-target="contextInput">Для 7 класса,
-                  смешанный уровень подготовки, часть учеников с низкой мотивацией</button>
-                <button type="button" class="btn builder-option" data-builder-target="contextInput">Для 9 класса,
-                  подготовка к контрольной, нужно повторение ключевых тем</button>
-                <button type="button" class="btn builder-option" data-builder-target="contextInput">Для 6 класса, работа в
-                  парах, 15 минут на выполнение задания</button>
-              </div>
-              <label>Свой контекст
-                <input type="text" id="contextInput" placeholder="для ... класса, тема ...">
-              </label>
-            </div>
-
-            <div class="builder-section" data-builder-section="format">
-              <h5>Формат</h5>
-              <div class="builder-options">
-                <button type="button" class="btn builder-option" data-builder-target="formatInput">Формат: 8 заданий с
-                  вариантами ответов и ключами</button>
-                <button type="button" class="btn builder-option" data-builder-target="formatInput">Формат: пошаговый
-                  сценарий + карточки для печати</button>
-                <button type="button" class="btn builder-option" data-builder-target="formatInput">Формат:
-                  HTML-интерактив с кнопками и автопроверкой</button>
-                <button type="button" class="btn builder-option" data-builder-target="formatInput">Формат: таблица
-                  (задание, ответ, комментарий учителя)</button>
-              </div>
-              <label>Свой формат
-                <input type="text" id="formatInput" placeholder="Формат: ...">
-              </label>
-            </div>
-
-            <div class="builder-section" data-builder-section="constraints">
-              <h5>Ограничения</h5>
-              <div class="builder-options">
-                <button type="button" class="btn builder-option" data-builder-target="constraintsInput">Ограничения:
-                  простой язык, уровень B1, без сложной терминологии</button>
-                <button type="button" class="btn builder-option" data-builder-target="constraintsInput">Ограничения: время
-                  выполнения до 10 минут</button>
-                <button type="button" class="btn builder-option" data-builder-target="constraintsInput">Ограничения: не
-                  более 1 экрана текста на задание</button>
-                <button type="button" class="btn builder-option" data-builder-target="constraintsInput">Ограничения:
-                  добавить дифференциацию (базовый/повышенный уровень)</button>
-              </div>
-              <label>Свои ограничения
-                <input type="text" id="constraintsInput" placeholder="Сложность, объем, стиль ...">
-              </label>
-            </div>
-
-            <pre id="generatedPrompt">Заполните поля конструктора, чтобы получить готовый промпт.</pre>
-            <button class="btn copy-btn" data-copy-target="generatedPrompt"
-              aria-label="Скопировать сгенерированный промпт">📋 Копировать</button>
-            <span class="copy-status" aria-live="polite"></span>
-          </div>
-          <h4>Пример промпта</h4>
-          <div class="actions">
-            <button class="btn" id="stage3FullscreenBtn" aria-label="Развернуть пример промпта этапа 3 на весь экран">🖥
-              На весь экран</button>
-          </div>
-          <div class="embed-wrap">
-            <iframe id="stage3PromptFrame" src="./example-quiz.html" title="Пример промпта" loading="lazy"
-              referrerpolicy="no-referrer" allowfullscreen>
-            </iframe>
-          </div>
-        </article>
-
-
-        <article class="card">
           <h3>Библиотека примеров</h3>
           <div class="card-grid">
             <div class="mini-card example-card">
@@ -492,6 +388,122 @@
                   пример</a>
               </div>
             </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <h3>Пример промпта</h3>
+          <div class="actions">
+            <button class="btn" id="stage3FullscreenBtn" aria-label="Развернуть пример промпта этапа 3 на весь экран">🖥
+              На весь экран</button>
+          </div>
+          <div class="embed-wrap">
+            <iframe id="stage3PromptFrame" src="./example-quiz.html" title="Пример промпта" loading="lazy"
+              referrerpolicy="no-referrer" allowfullscreen>
+            </iframe>
+          </div>
+        </article>
+
+        <article class="card">
+          <h3>🧮 Формула идеального промта</h3>
+          <p class="formula">`Роль + Задача + Контекст + Формат + Ограничения`</p>
+          <p>Пример: «Ты — методист по истории. Создай интерактивную хронологическую ленту по теме "Петровские реформы"
+            для 7 класса. Формат: 8 событий с датами, кратким описанием и вопросом на анализ. Сложность — базовая»</p>
+          <div class="prompt-builder prompt-builder-v2">
+            <h4>Интерактивный конструктор промпта</h4>
+
+            <div class="builder-section" data-builder-section="role">
+              <h5>Роль</h5>
+              <div class="builder-options">
+                <button type="button" class="btn builder-option" data-builder-target="roleInput">Ты — учитель</button>
+                <button type="button" class="btn builder-option" data-builder-target="roleInput">Ты — методист</button>
+                <button type="button" class="btn builder-option" data-builder-target="roleInput">Ты — классный руководитель</button>
+                <button type="button" class="btn builder-option" data-builder-target="roleInput">Ты — тьютор</button>
+              </div>
+              <label>Свой вариант роли
+                <input type="text" id="roleInput" placeholder="Ты — ...">
+              </label>
+            </div>
+
+            <div class="builder-section" data-builder-section="task">
+              <h5>Задача</h5>
+              <div class="builder-options">
+                <button type="button" class="btn builder-option" data-builder-target="taskInput">Создай интерактивный рабочий лист</button>
+                <button type="button" class="btn builder-option" data-builder-target="taskInput">Создай игру «Кто хочет стать миллионером?»</button>
+                <button type="button" class="btn builder-option" data-builder-target="taskInput">Создай викторину</button>
+                <button type="button" class="btn builder-option" data-builder-target="taskInput">Создай задание на сопоставление</button>
+              </div>
+              <label>Свой вариант задачи
+                <input type="text" id="taskInput" placeholder="Создай ...">
+              </label>
+            </div>
+
+            <div class="builder-section" data-builder-section="context">
+              <h5>Контекст</h5>
+              <div class="builder-options">
+                <button type="button" class="btn builder-option" data-builder-target="contextInput">Для 5 класса, тема: Дроби, цель — закрепление материала</button>
+                <button type="button" class="btn builder-option" data-builder-target="contextInput">Для 7 класса, смешанный уровень подготовки, часть учеников с низкой мотивацией</button>
+                <button type="button" class="btn builder-option" data-builder-target="contextInput">Для 9 класса, подготовка к контрольной, нужно повторение ключевых тем</button>
+                <button type="button" class="btn builder-option" data-builder-target="contextInput">Для 6 класса, работа в парах, 15 минут на выполнение задания</button>
+              </div>
+              <label>Свой контекст
+                <input type="text" id="contextInput" placeholder="для ... класса, тема ...">
+              </label>
+            </div>
+
+            <div class="builder-section" data-builder-section="format">
+              <h5>Формат</h5>
+              <div class="builder-options">
+                <button type="button" class="btn builder-option" data-builder-target="formatInput">Формат: 8 заданий с вариантами ответов и ключами</button>
+                <button type="button" class="btn builder-option" data-builder-target="formatInput">Формат: пошаговый сценарий + карточки для печати</button>
+                <button type="button" class="btn builder-option" data-builder-target="formatInput">Формат: HTML-интерактив с кнопками и автопроверкой</button>
+                <button type="button" class="btn builder-option" data-builder-target="formatInput">Формат: таблица (задание, ответ, комментарий учителя)</button>
+              </div>
+              <label>Свой формат
+                <input type="text" id="formatInput" placeholder="Формат: ...">
+              </label>
+            </div>
+
+            <div class="builder-section" data-builder-section="constraints">
+              <h5>Ограничения</h5>
+              <div class="builder-options">
+                <button type="button" class="btn builder-option" data-builder-target="constraintsInput">Ограничения: простой язык, уровень B1, без сложной терминологии</button>
+                <button type="button" class="btn builder-option" data-builder-target="constraintsInput">Ограничения: время выполнения до 10 минут</button>
+                <button type="button" class="btn builder-option" data-builder-target="constraintsInput">Ограничения: не более 1 экрана текста на задание</button>
+                <button type="button" class="btn builder-option" data-builder-target="constraintsInput">Ограничения: добавить дифференциацию (базовый/повышенный уровень)</button>
+              </div>
+              <label>Свои ограничения
+                <input type="text" id="constraintsInput" placeholder="Сложность, объем, стиль ...">
+              </label>
+            </div>
+
+            <pre id="generatedPrompt">Заполните поля конструктора, чтобы получить готовый промпт.</pre>
+            <button class="btn copy-btn" data-copy-target="generatedPrompt"
+              aria-label="Скопировать сгенерированный промпт">📋 Копировать</button>
+            <span class="copy-status" aria-live="polite"></span>
+          </div>
+        </article>
+
+        <article class="card">
+          <h3>Инструкция: как создать приложение</h3>
+          <a class="btn link-btn" href="https://qwen.ai" target="_blank" rel="noopener noreferrer"
+            aria-label="Открыть QWEN">🔗 Открыть QWEN</a>
+          <ul>
+            <li>Выберите режим: «Артефакты»</li>
+            <li>Добавьте задачу: прикрепите файл при необходимости</li>
+            <li>Введите промпт и дождитесь генерации — ИИ создаст HTML/CSS/JS код</li>
+            <li>Нажмите «Предварительный просмотр» или «Запустить», чтобы увидеть приложение прямо в чате</li>
+            <li>Протестируйте приложение: проверьте работу кнопок и полей ввода, убедитесь, что логика верна —
+              математическая и алгоритмическая</li>
+            <li>Напишите правки агенту: «Исправь ошибку в расчёте» или «Сделай кнопку больше»</li>
+            <li>Нажмите «Развернуть», чтобы открыть приложение на весь экран без интерфейса чата</li>
+            <li>Скопируйте ссылку из адресной строки или через вкладку «Поделиться»</li>
+          </ul>
+
+          <h4>Видео инструкция</h4>
+          <div class="embed-wrap">
+            <iframe id="stage3InstructionVideoFrame" src="about:blank" title="Видео-инструкция для этапа 3" loading="lazy"
+              referrerpolicy="no-referrer" allowfullscreen></iframe>
           </div>
         </article>
       </section>
