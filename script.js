@@ -109,9 +109,13 @@ const builderInputs = [
 const generatedPrompt = document.getElementById("generatedPrompt");
 const builderOptionButtons = Array.from(document.querySelectorAll(".builder-option"));
 
+function normalizePromptText(value) {
+  return (value || "").replace(/\s+/g, " ").trim();
+}
+
 function updatePromptBuilder() {
   if (!generatedPrompt) return;
-  const values = builderInputs.map((input) => input.value.trim());
+  const values = builderInputs.map((input) => normalizePromptText(input?.value));
   const hasValue = values.some(Boolean);
   if (!hasValue) {
     generatedPrompt.textContent = "Заполните поля конструктора, чтобы получить готовый промпт.";
@@ -149,7 +153,7 @@ if (builderOptionButtons.length > 0) {
         section.querySelectorAll(".builder-option").forEach((item) => item.classList.remove("active"));
       }
       button.classList.add("active");
-      targetInput.value = button.textContent.trim();
+      targetInput.value = normalizePromptText(button.textContent);
       updatePromptBuilder();
     });
   });

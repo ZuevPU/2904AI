@@ -344,6 +344,9 @@ th {
   font-size: 0.9rem;
   padding: 8px 12px;
   border-radius: 999px;
+  white-space: normal;
+  line-height: 1.25;
+  text-align: left;
 }
 
 .builder-option.active {
