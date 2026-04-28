@@ -1,0 +1,1643 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мастер-класс: Qwen для учителя</title>
+    <style>
+        /* ============================================
+           CSS ПЕРЕМЕННЫЕ И БАЗОВЫЕ СТИЛИ
+           ============================================ */
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --accent: #10b981;
+            --warning: #f59e0b;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --radius: 12px;
+            --transition: 0.2s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            font-size: 16px;
+            min-height: 100vh;
+        }
+
+        /* ============================================
+           ХЕДЕР И ПРОГРЕСС-БАР
+           ============================================ */
+        header {
+            background: var(--card-bg);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 1rem;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stage-indicator {
+            background: var(--primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .progress-bar {
+            max-width: 1200px;
+            margin: 1rem auto 0;
+            display: flex;
+            gap: 0.5rem;
+            padding: 0 1rem;
+        }
+
+        .progress-step {
+            flex: 1;
+            height: 8px;
+            background: var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-step.active {
+            background: var(--primary);
+        }
+
+        .progress-step.completed {
+            background: var(--accent);
+        }
+
+        /* ============================================
+           КОНТЕЙНЕР И ЭТАПЫ
+           ============================================ */
+        main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            min-height: calc(100vh - 200px);
+        }
+
+        .stage {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .stage.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stage-title {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* ============================================
+           КАРТОЧКИ
+           ============================================ */
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* ============================================
+           КНОПКИ
+           ============================================ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            min-height: 44px;
+            min-width: 44px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: var(--border);
+            color: var(--text);
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e1;
+        }
+
+        .btn-accent {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-accent:hover {
+            background: #059669;
+        }
+
+        .btn-copy {
+            background: var(--bg);
+            border: 2px solid var(--border);
+            color: var(--text);
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .btn-copy:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-copy.copied {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        /* ============================================
+           НАВИГАЦИЯ
+           ============================================ */
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid var(--border);
+        }
+
+        /* ============================================
+           АККОРДЕОНЫ
+           ============================================ */
+        .accordion {
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .accordion-header {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            background: var(--bg);
+            border: none;
+            text-align: left;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .accordion-header:hover {
+            background: #e2e8f0;
+        }
+
+        .accordion-header::after {
+            content: '▼';
+            transition: var(--transition);
+        }
+
+        .accordion-header.active::after {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            padding: 0 1.5rem;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+
+        .accordion-content.open {
+            padding: 1.5rem;
+            max-height: 1000px;
+        }
+
+        /* ============================================
+           ТАБЛИЦЫ
+           ============================================ */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--bg);
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        tr:hover {
+            background: var(--bg);
+        }
+
+        /* ============================================
+           КОД-БЛОКИ
+           ============================================ */
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .code-block .copy-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .code-block .copy-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* ============================================
+           БАННЕРЫ И ПРЕДУПРЕЖДЕНИЯ
+           ============================================ */
+        .banner {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-left: 4px solid var(--warning);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            margin: 1.5rem 0;
+        }
+
+        .banner-warning {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-left-color: var(--primary);
+        }
+
+        .banner-success {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            border-left-color: var(--accent);
+        }
+
+        /* ============================================
+           ГРИДЫ И СЕТКИ
+           ============================================ */
+        .grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+
+        .grid-4 {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+
+        /* ============================================
+           ЧИПСЫ/ТЕГИ
+           ============================================ */
+        .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .chip {
+            background: var(--bg);
+            border: 2px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .chip:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* ============================================
+           ФОРМУЛА ПРОМПТА
+           ============================================ */
+        .formula {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            background: var(--bg);
+            border-radius: var(--radius);
+            margin: 1.5rem 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .formula-item {
+            background: var(--primary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+        }
+
+        .formula-operator {
+            color: var(--text-light);
+            font-size: 1.5rem;
+        }
+
+        .prompt-builder {
+            display: grid;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .prompt-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .prompt-field label {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .prompt-field input,
+        .prompt-field textarea,
+        .prompt-field select {
+            padding: 0.75rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: var(--transition);
+        }
+
+        .prompt-field input:focus,
+        .prompt-field textarea:focus,
+        .prompt-field select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .generated-prompt {
+            background: var(--bg);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            border: 2px dashed var(--primary);
+            margin-top: 1rem;
+        }
+
+        /* ============================================
+           МОДАЛЬНОЕ ОКНО
+           ============================================ */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: var(--radius);
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        /* ============================================
+           УРОВНИ СЛОЖНОСТИ
+           ============================================ */
+        .level-card {
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .level-card:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .level-badge {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .level-1 .level-badge { background: #10b981; }
+        .level-2 .level-badge { background: #3b82f6; }
+        .level-3 .level-badge { background: #8b5cf6; }
+        .level-4 .level-badge { background: #f59e0b; }
+
+        /* ============================================
+           ТОАСТ УВЕДОМЛЕНИЕ
+           ============================================ */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--accent);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow-hover);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: var(--transition);
+            z-index: 1001;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* ============================================
+           ФУТЕР
+           ============================================ */
+        footer {
+            background: var(--card-bg);
+            border-top: 2px solid var(--border);
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-light);
+            margin-top: 3rem;
+        }
+
+        /* ============================================
+           АДАПТИВНОСТЬ
+           ============================================ */
+        @media (max-width: 768px) {
+            .stage-title {
+                font-size: 1.5rem;
+            }
+
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .progress-bar {
+                gap: 0.25rem;
+            }
+
+            .formula {
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+
+            .formula-operator {
+                transform: rotate(90deg);
+            }
+
+            .navigation {
+                flex-direction: column;
+            }
+
+            .navigation .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* ============================================
+           СПИСКИ
+           ============================================ */
+        ul, ol {
+            padding-left: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+
+        .checklist li {
+            padding: 0.75rem;
+            background: var(--bg);
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .checklist li::before {
+            content: '☐';
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+
+        /* ============================================
+           ПРЕДМЕТНЫЕ КАРТОЧКИ
+           ============================================ */
+        .subject-card {
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .subject-card:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .subject-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .subject-badge {
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .subject-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* ============================================
+           ИНДИКАТОР ВАЖНОСТИ
+           ============================================ */
+        .important-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .reminder-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .reminder-card {
+            background: var(--bg);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- ХЕДЕР -->
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                📚 Qwen для Учителя
+            </div>
+            <div class="stage-indicator" id="stageIndicator">Этап 1 из 4</div>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-step active" id="progress1"></div>
+            <div class="progress-step" id="progress2"></div>
+            <div class="progress-step" id="progress3"></div>
+            <div class="progress-step" id="progress4"></div>
+        </div>
+    </header>
+
+    <!-- ОСНОВНОЙ КОНТЕНТ -->
+    <main>
+        <!-- ЭТАП 1: Просто о возможностях -->
+        <section class="stage active" id="stage1">
+            <h1 class="stage-title">🎯 Этап 1: Просто о возможностях</h1>
+            
+            <!-- Блок Важные напоминания -->
+            <div class="card">
+                <h2 class="card-title">❗ Важные напоминания</h2>
+                <div class="reminder-grid">
+                    <div class="reminder-card">
+                        <div class="important-icon">🔒</div>
+                        <p><strong>Приватность</strong><br>Не загружайте персональные данные учеников</p>
+                    </div>
+                    <div class="reminder-card">
+                        <div class="important-icon">✅</div>
+                        <p><strong>Проверка</strong><br>Всегда проверяйте результат перед использованием</p>
+                    </div>
+                    <div class="reminder-card">
+                        <div class="important-icon">💻</div>
+                        <p><strong>Техника</strong><br>Убедитесь в стабильном подключении к интернету</p>
+                    </div>
+                    <div class="reminder-card">
+                        <div class="important-icon">🔄</div>
+                        <p><strong>Гибкость</strong><br>Меняйте формулировки, если результат не подходит</p>
+                    </div>
+                    <div class="reminder-card">
+                        <div class="important-icon">👨‍🎓</div>
+                        <p><strong>Фокус на ученике</strong><br>ИИ — инструмент, а не замена педагога</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Блок Чем поможет Qwen учителю -->
+            <div class="card">
+                <h2 class="card-title">📚 Чем поможет Qwen учителю?</h2>
+                
+                <div class="accordion">
+                    <button class="accordion-header">Подготовка к урокам 📝</button>
+                    <div class="accordion-content">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Задача</th>
+                                    <th>Пример запроса</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>План урока</td>
+                                    <td>«Составь план урока по теме "Фотосинтез" для 6 класса»</td>
+                                </tr>
+                                <tr>
+                                    <td>Тесты и викторины</td>
+                                    <td>«Создай тест из 10 вопросов по рассказу "Муму"»</td>
+                                </tr>
+                                <tr>
+                                    <td>Домашние задания</td>
+                                    <td>«Придумай 5 творческих заданий по теме "Дроби"»</td>
+                                </tr>
+                                <tr>
+                                    <td>Презентации</td>
+                                    <td>«Структурируй материал для презентации о космосе»</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="accordion">
+                    <button class="accordion-header">Работа с текстом 📖</button>
+                    <div class="accordion-content">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Задача</th>
+                                    <th>Пример запроса</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Сокращение текста</td>
+                                    <td>«Сделай краткое содержание главы 3»</td>
+                                </tr>
+                                <tr>
+                                    <td>Адаптация текста</td>
+                                    <td>«Упрости этот текст для 5 класса»</td>
+                                </tr>
+                                <tr>
+                                    <td>Перевод</td>
+                                    <td>«Переведи этот отрывок на английский язык»</td>
+                                </tr>
+                                <tr>
+                                    <td>Анализ текста</td>
+                                    <td>«Выдели главную мысль и ключевые термины»</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="accordion">
+                    <button class="accordion-header">Идеи и творчество 💡</button>
+                    <div class="accordion-content">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Задача</th>
+                                    <th>Пример запроса</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Игры на уроке</td>
+                                    <td>«Предложи 3 образовательные игры по теме "Химические реакции"»</td>
+                                </tr>
+                                <tr>
+                                    <td>Проектная деятельность</td>
+                                    <td>«Дай идеи для группового проекта о экологии»</td>
+                                </tr>
+                                <tr>
+                                    <td>Внеклассные мероприятия</td>
+                                    <td>«Сценарий праздника ко Дню космонавтики»</td>
+                                </tr>
+                                <tr>
+                                    <td>Креативные задания</td>
+                                    <td>«Придумай нестандартные задачи по геометрии»</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Блок Важно помнить -->
+            <div class="banner banner-warning">
+                <h3 style="color: var(--primary); margin-bottom: 1rem;">⚠️ Важно помнить</h3>
+                <ol style="margin: 0; padding-left: 1.5rem;">
+                    <li><strong>Qwen может ошибаться</strong> — всегда перепроверяйте факты</li>
+                    <li><strong>Контекст важен</strong> — чем подробнее запрос, тем лучше результат</li>
+                    <li><strong>Итерации нормальны</strong> — уточняйте и дорабатывайте ответы</li>
+                    <li><strong>Вы — эксперт</strong> — ИИ лишь помощник, решение за вами</li>
+                </ol>
+            </div>
+
+            <!-- Блок С чего начать -->
+            <div class="card">
+                <h2 class="card-title">🚀 С чего начать? 3 простых шага</h2>
+                <ol>
+                    <li>
+                        <strong>Определите задачу</strong>
+                        <p style="color: var(--text-light); margin-top: 0.5rem;">Что именно вам нужно? План урока, тест, идея для проекта?</p>
+                    </li>
+                    <li>
+                        <strong>Сформулируйте запрос</strong>
+                        <p style="color: var(--text-light); margin-top: 0.5rem;">Используйте формулу: Роль + Задача + Контекст + Формат</p>
+                    </li>
+                    <li>
+                        <strong>Оцените и доработайте</strong>
+                        <p style="color: var(--text-light); margin-top: 0.5rem;">Если результат не идеален — уточните запрос</p>
+                    </li>
+                </ol>
+
+                <div class="banner banner-success" style="margin-top: 1.5rem;">
+                    <h4 style="margin-bottom: 0.5rem;">💡 Пример запроса для викторины:</h4>
+                    <div class="code-block" style="margin: 1rem 0;">
+                        <pre style="white-space: pre-wrap;">Создай викторину по рассказу "Муму" Тургенева. 10 вопросов с вариантами ответов. Включи вопросы на понимание сюжета и анализ характеров.</pre>
+                        <button class="copy-btn" onclick="copyToClipboard('Создай викторину по рассказу &quot;Муму&quot; Тургенева. 10 вопросов с вариантами ответов. Включи вопросы на понимание сюжета и анализ характеров.', this)">📋 Копировать</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ЭТАП 2: От простого к сложному -->
+        <section class="stage" id="stage2">
+            <h1 class="stage-title">📈 Этап 2: От простого к сложному</h1>
+            
+            <div class="card">
+                <p style="font-size: 1.1rem; margin-bottom: 1.5rem;">Qwen поддерживает разные уровни сложности запросов — от быстрых вопросов до создания интерактивных артефактов.</p>
+                
+                <div class="grid grid-2">
+                    <!-- Уровень 1 -->
+                    <div class="level-card level-1">
+                        <span class="level-badge">Уровень 1</span>
+                        <h3 style="color: var(--primary); margin: 0.5rem 0;">⚡ Быстрые вопросы</h3>
+                        <p style="color: var(--text-light); margin-bottom: 1rem;">Простые запросы для мгновенных ответов</p>
+                        
+                        <div class="banner banner-success" style="padding: 1rem; margin: 0.5rem 0;">
+                            <strong>Пример:</strong><br>
+                            «Объясни тему "Фотосинтез" простыми словами»
+                        </div>
+                        
+                        <p style="margin-top: 1rem;"><strong>Результат для ученика:</strong> Краткое понятное объяснение термина или концепции</p>
+                    </div>
+
+                    <!-- Уровень 2 -->
+                    <div class="level-card level-2">
+                        <span class="level-badge">Уровень 2</span>
+                        <h3 style="color: var(--primary); margin: 0.5rem 0;">📋 Структурированный контент</h3>
+                        <p style="color: var(--text-light); margin-bottom: 1rem;">Таблицы, сценарии, карточки знаний</p>
+                        
+                        <div class="banner banner-success" style="padding: 1rem; margin: 0.5rem 0;">
+                            <strong>Пример:</strong><br>
+                            «Создай таблицу сравнения климатических поясов»
+                        </div>
+                        
+                        <p style="margin-top: 1rem;"><strong>Результат:</strong> Готовый структурированный материал для урока</p>
+                    </div>
+
+                    <!-- Уровень 3 -->
+                    <div class="level-card level-3">
+                        <span class="level-badge">Уровень 3</span>
+                        <h3 style="color: var(--primary); margin: 0.5rem 0;">🔀 Ветвящиеся сценарии</h3>
+                        <p style="color: var(--text-light); margin-bottom: 1rem;">Текстовые квесты и интерактивные истории</p>
+                        
+                        <div class="banner banner-success" style="padding: 1rem; margin: 0.5rem 0;">
+                            <strong>Пример:</strong><br>
+                            «Создай текстовый квест по теме "Экосистемы"»
+                        </div>
+                        
+                        <p style="margin-top: 1rem;"><strong>Результат:</strong> Интерактивный сценарий с выбором действий</p>
+                    </div>
+
+                    <!-- Уровень 4 -->
+                    <div class="level-card level-4">
+                        <span class="level-badge">Уровень 4</span>
+                        <h3 style="color: var(--primary); margin: 0.5rem 0;">🎨 Артефакты</h3>
+                        <p style="color: var(--text-light); margin-bottom: 1rem;">Интерактив в браузере: викторины, тренажёры, таймеры</p>
+                        
+                        <div class="banner banner-success" style="padding: 1rem; margin: 0.5rem 0;">
+                            <strong>Пример:</strong><br>
+                            «Создай интерактивную викторину с подсчётом очков»
+                        </div>
+                        
+                        <p style="margin-top: 1rem;"><strong>Результат:</strong> Работающее веб-приложение в браузере</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Блок Как это работает (Уровень 4) -->
+            <div class="card">
+                <h2 class="card-title">🔧 Как работают артефакты?</h2>
+                
+                <div class="grid grid-4" style="margin-bottom: 2rem;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">💬</div>
+                        <strong>1. Запрос</strong>
+                        <p style="color: var(--text-light); font-size: 0.9rem;">Опишите, что нужно создать</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">⚙️</div>
+                        <strong>2. Генерация</strong>
+                        <p style="color: var(--text-light); font-size: 0.9rem;">Qwen создаёт код приложения</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">👁️</div>
+                        <strong>3. Предпросмотр</strong>
+                        <p style="color: var(--text-light); font-size: 0.9rem;">Вы видите результат сразу</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📤</div>
+                        <strong>4. Экспорт</strong>
+                        <p style="color: var(--text-light); font-size: 0.9rem;">Поделитесь ссылкой с учениками</p>
+                    </div>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Запрос</th>
+                            <th>Что создаст Qwen</th>
+                            <th>Как использовать</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>«Викторина по литературе»</td>
+                            <td>Веб-страница с вопросами и подсчётом баллов</td>
+                            <td>Открыть на уроке, показать классу</td>
+                        </tr>
+                        <tr>
+                            <td>«Тренажёр устного счёта»</td>
+                            <td>Интерактивное упражнение с генерацией примеров</td>
+                            <td>Дать ссылку для домашней работы</td>
+                        </tr>
+                        <tr>
+                            <td>«Таймер на 5 минут»</td>
+                            <td>Визуальный таймер с анимацией</td>
+                            <td>Использовать для ограничения времени заданий</td>
+                        </tr>
+                        <tr>
+                            <td>«Карточки слов»</td>
+                            <td>Приложение для запоминания терминов</td>
+                            <td>Рекомендовать для самостоятельной работы</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <button class="btn btn-accent" onclick="showRandomExample()" style="margin-top: 1.5rem;">
+                    🎲 Сгенерировать случайный пример
+                </button>
+            </div>
+
+            <!-- Примеры запросов с модальными окнами -->
+            <div class="card">
+                <h2 class="card-title">💾 Примеры готовых запросов</h2>
+                <p style="color: var(--text-light); margin-bottom: 1rem;">Нажмите на любой пример, чтобы открыть его для копирования</p>
+                
+                <div class="grid grid-2">
+                    <div class="chip" onclick="openModalPrompt('Создай интерактивную викторину из 10 вопросов по рассказу &quot;Муму&quot;. Каждый вопрос с 4 вариантами ответа. Показывай результат после каждого вопроса. В конце — итоговый счёт и оценку.')">
+                        📝 Викторина по «Муму»
+                    </div>
+                    <div class="chip" onclick="openModalPrompt('Разработай тренажёр для решения квадратных уравнений. Генерируй случайные уравнения, проверяй ответы, показывай пошаговое решение при ошибке.')">
+                        🧮 Тренажёр уравнений
+                    </div>
+                    <div class="chip" onclick="openModalPrompt('Создай таймер Pomodoro на 25 минут с визуальной индикацией оставшегося времени. Добавь звуковой сигнал по окончании.')">
+                        ⏱️ Таймер Pomodoro
+                    </div>
+                    <div class="chip" onclick="openModalPrompt('Сделай карточки для запоминания химических элементов. На одной стороне — название и символ, на другой — атомная масса и описание.')">
+                        🧪 Карточки элементов
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ЭТАП 3: От слов к делу -->
+        <section class="stage" id="stage3">
+            <h1 class="stage-title">🛠️ Этап 3: От слов к делу</h1>
+            
+            <!-- Формула идеального промпта -->
+            <div class="card">
+                <h2 class="card-title">🧮 Формула идеального промпта</h2>
+                
+                <div class="formula">
+                    <span class="formula-item">Роль</span>
+                    <span class="formula-operator">+</span>
+                    <span class="formula-item">Задача</span>
+                    <span class="formula-operator">+</span>
+                    <span class="formula-item">Контекст</span>
+                    <span class="formula-operator">+</span>
+                    <span class="formula-item">Формат</span>
+                    <span class="formula-operator">+</span>
+                    <span class="formula-item">Ограничения</span>
+                </div>
+
+                <h3 style="margin: 1.5rem 0 1rem;">Интерактивный конструктор промптов</h3>
+                <div class="prompt-builder">
+                    <div class="prompt-field">
+                        <label for="promptRole">🎭 Роль (кто должен отвечать)</label>
+                        <input type="text" id="promptRole" placeholder="Например: Ты — опытный учитель математики...">
+                    </div>
+                    <div class="prompt-field">
+                        <label for="promptTask">📌 Задача (что нужно сделать)</label>
+                        <textarea id="promptTask" rows="2" placeholder="Например: создай план урока по теме..."></textarea>
+                    </div>
+                    <div class="prompt-field">
+                        <label for="promptContext">📖 Контекст (для кого, условия)</label>
+                        <input type="text" id="promptContext" placeholder="Например: для 6 класса, 45 минут, есть проектор...">
+                    </div>
+                    <div class="prompt-field">
+                        <label for="promptFormat">📄 Формат результата</label>
+                        <select id="promptFormat">
+                            <option value="">Выберите формат...</option>
+                            <option value="Текст">Текст</option>
+                            <option value="Таблица">Таблица</option>
+                            <option value="Список">Список</option>
+                            <option value="Пошаговая инструкция">Пошаговая инструкция</option>
+                            <option value="Презентация (структура)">Презентация (структура)</option>
+                            <option value="HTML-код">HTML-код</option>
+                        </select>
+                    </div>
+                    <div class="prompt-field">
+                        <label for="promptConstraints">⚠️ Ограничения и требования</label>
+                        <textarea id="promptConstraints" rows="2" placeholder="Например: не более 500 слов, без сложных терминов..."></textarea>
+                    </div>
+                </div>
+
+                <div class="generated-prompt">
+                    <h4 style="margin-bottom: 0.5rem; color: var(--primary);">✨ Готовый промпт:</h4>
+                    <div class="code-block" style="margin: 0;">
+                        <pre id="generatedPromptOutput" style="white-space: pre-wrap; min-height: 100px;">Заполните поля выше, чтобы получить готовый промпт</pre>
+                        <button class="copy-btn" onclick="copyToClipboard(document.getElementById('generatedPromptOutput').textContent, this)">📋 Копировать</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Итеративная доработка -->
+            <div class="card">
+                <h2 class="card-title">🔁 Итеративная доработка</h2>
+                <p style="color: var(--text-light); margin-bottom: 1rem;">Если первый результат не идеален — используйте уточняющие фразы:</p>
+                
+                <div class="chips">
+                    <span class="chip">Сделай вопросы более открытыми</span>
+                    <span class="chip">Добавь больше примеров</span>
+                    <span class="chip">Упрости для 5 класса</span>
+                    <span class="chip">Расширь объяснение</span>
+                    <span class="chip">Добавь визуальные элементы</span>
+                    <span class="chip">Сделай короче</span>
+                    <span class="chip">Добавь практические задания</span>
+                    <span class="chip">Переведи в таблицу</span>
+                    <span class="chip">Добавь критерии оценки</span>
+                    <span class="chip">Создай рубрику</span>
+                </div>
+            </div>
+
+            <!-- Экспорт и интеграция -->
+            <div class="card">
+                <h2 class="card-title">📤 Экспорт и интеграция</h2>
+                <div class="grid grid-3">
+                    <div class="reminder-card">
+                        <div class="important-icon">📄</div>
+                        <strong>PDF / Документ</strong>
+                        <p style="color: var(--text-light); font-size: 0.9rem;">Копируйте текст в Word или Google Docs</p>
+                    </div>
+                    <div class="reminder-card">
+                        <div class="important-icon">📊</div>
+                        <strong>Презентация</strong>
+                        <p style="color: var(--text-light); font-size: 0.9rem;">Используйте структуру для слайдов</p>
+                    </div>
+                    <div class="reminder-card">
+                        <div class="important-icon">🤖</div>
+                        <strong>Чат-бот</strong>
+                        <p style="color: var(--text-light); font-size: 0.9rem;">Экспортируйте как HTML-артефакт</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Лайфхак -->
+            <div class="banner banner-success">
+                <h3 style="margin-bottom: 0.5rem;">💡 Лайфхак</h3>
+                <p style="font-style: italic; font-size: 1.1rem;">«Сохраняйте удачные промпты в отдельный документ. Создайте свою библиотеку шаблонов для типовых задач — это сэкономит часы работы!»</p>
+            </div>
+
+            <!-- Библиотека примеров -->
+            <div class="card">
+                <h2 class="card-title">📚 Библиотека примеров по предметам</h2>
+                <p style="color: var(--text-light); margin-bottom: 1.5rem;">Готовые промпты для разных предметов и классов</p>
+                
+                <div class="grid grid-2">
+                    <!-- Литература 8 класс -->
+                    <div class="subject-card">
+                        <div class="subject-header">
+                            <h3 style="margin: 0;">📖 Литература</h3>
+                            <span class="subject-badge">8 класс</span>
+                        </div>
+                        <p><strong>Тема:</strong> Тургенев «Муму»</p>
+                        <div class="code-block" style="margin: 1rem 0; padding: 1rem;">
+                            <pre style="white-space: pre-wrap; font-size: 0.85rem;">Создай викторину по рассказу "Муму" Тургенева. 10 вопросов с вариантами ответов. Включи вопросы на понимание сюжета и анализ характеров.</pre>
+                        </div>
+                        <div class="subject-actions">
+                            <button class="btn btn-copy" onclick="copyToClipboard('Создай викторину по рассказу &quot;Муму&quot; Тургенева. 10 вопросов с вариантами ответов. Включи вопросы на понимание сюжета и анализ характеров.', this)">📋 Копировать промпт</button>
+                            <button class="btn btn-primary" onclick="openModalPrompt('Создай викторину по рассказу &quot;Муму&quot; Тургенева. 10 вопросов с вариантами ответов. Включи вопросы на понимание сюжета и анализ характеров.')">🔗 Открыть пример</button>
+                        </div>
+                    </div>
+
+                    <!-- Математика 5 класс -->
+                    <div class="subject-card">
+                        <div class="subject-header">
+                            <h3 style="margin: 0;">🧮 Математика</h3>
+                            <span class="subject-badge">5 класс</span>
+                        </div>
+                        <p><strong>Тема:</strong> Дроби</p>
+                        <div class="code-block" style="margin: 1rem 0; padding: 1rem;">
+                            <pre style="white-space: pre-wrap; font-size: 0.85rem;">Разработай 5 практических задач на сложение дробей с одинаковыми знаменателями. Добавь визуальные подсказки и пошаговые решения.</pre>
+                        </div>
+                        <div class="subject-actions">
+                            <button class="btn btn-copy" onclick="copyToClipboard('Разработай 5 практических задач на сложение дробей с одинаковыми знаменателями. Добавь визуальные подсказки и пошаговые решения.', this)">📋 Копировать промпт</button>
+                            <button class="btn btn-primary" onclick="openModalPrompt('Разработай 5 практических задач на сложение дробей с одинаковыми знаменателями. Добавь визуальные подсказки и пошаговые решения.')">🔗 Открыть пример</button>
+                        </div>
+                    </div>
+
+                    <!-- География 7 класс -->
+                    <div class="subject-card">
+                        <div class="subject-header">
+                            <h3 style="margin: 0;">🌍 География</h3>
+                            <span class="subject-badge">7 класс</span>
+                        </div>
+                        <p><strong>Тема:</strong> Климатические пояса</p>
+                        <div class="code-block" style="margin: 1rem 0; padding: 1rem;">
+                            <pre style="white-space: pre-wrap; font-size: 0.85rem;">Создай интерактивную таблицу сравнения климатических поясов Земли. Включи температуру, осадки, характерную растительность и животный мир.</pre>
+                        </div>
+                        <div class="subject-actions">
+                            <button class="btn btn-copy" onclick="copyToClipboard('Создай интерактивную таблицу сравнения климатических поясов Земли. Включи температуру, осадки, характерную растительность и животный мир.', this)">📋 Копировать промпт</button>
+                            <button class="btn btn-primary" onclick="openModalPrompt('Создай интерактивную таблицу сравнения климатических поясов Земли. Включи температуру, осадки, характерную растительность и животный мир.')">🔗 Открыть пример</button>
+                        </div>
+                    </div>
+
+                    <!-- Биология 9 класс -->
+                    <div class="subject-card">
+                        <div class="subject-header">
+                            <h3 style="margin: 0;">🧬 Биология</h3>
+                            <span class="subject-badge">9 класс</span>
+                        </div>
+                        <p><strong>Тема:</strong> Строение клетки</p>
+                        <div class="code-block" style="margin: 1rem 0; padding: 1rem;">
+                            <pre style="white-space: pre-wrap; font-size: 0.85rem;">Разработай карточки для запоминания органоидов клетки. Для каждого органоида укажи название, функцию и аналогию из повседневной жизни.</pre>
+                        </div>
+                        <div class="subject-actions">
+                            <button class="btn btn-copy" onclick="copyToClipboard('Разработай карточки для запоминания органоидов клетки. Для каждого органоида укажи название, функцию и аналогию из повседневной жизни.', this)">📋 Копировать промпт</button>
+                            <button class="btn btn-primary" onclick="openModalPrompt('Разработай карточки для запоминания органоидов клетки. Для каждого органоида укажи название, функцию и аналогию из повседневной жизни.')">🔗 Открыть пример</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ЭТАП 4: Интерактивные уроки с Qwen -->
+        <section class="stage" id="stage4">
+            <h1 class="stage-title">🎓 Этап 4: Интерактивные уроки с Qwen</h1>
+            
+            <!-- Qwen как со-автор урока -->
+            <div class="card">
+                <h2 class="card-title">🤝 Qwen как со-автор урока</h2>
+                <p style="margin-bottom: 1rem;">Используйте ИИ для создания полноценных интерактивных уроков. Вот пример запроса:</p>
+                
+                <div class="code-block">
+                    <pre style="white-space: pre-wrap;">Ты — профессиональный методист. Создай план интерактивного урока по теме "[ТЕМА]" для [КЛАСС] класса.
+
+Включи:
+1. Организационный момент (2 мин)
+2. Актуализацию знаний (5 мин) — мини-викторина
+3. Изучение нового материала (15 мин) — интерактивная презентация
+4. Практическую работу (15 мин) — групповое задание
+5. Рефлексию (5 мин) — опрос
+6. Домашнее задание (3 мин)
+
+Создай HTML-страницу со всеми интерактивными элементами.</pre>
+                    <button class="copy-btn" onclick="copyToClipboard(this.parentElement.querySelector('pre').textContent, this)">📋 Копировать</button>
+                </div>
+
+                <div class="banner banner-success" style="margin-top: 1rem;">
+                    <strong>🔗 Демо-пример:</strong> Попробуйте создать аналогичный урок для своего предмета!
+                </div>
+            </div>
+
+            <!-- Расширенный промпт-шаблон -->
+            <div class="card">
+                <h2 class="card-title">📝 Расширенный промпт-шаблон</h2>
+                <p style="color: var(--text-light); margin-bottom: 1rem;">Готовый шаблон для создания комплексных учебных материалов</p>
+                
+                <div class="code-block">
+                    <pre style="white-space: pre-wrap; line-height: 1.8;">Ты — профессиональный методист с 20-летним опытом работы в школе. Твоя специализация — создание современных интерактивных уроков с использованием цифровых технологий.
+
+📚 ЗАДАЧА:
+Создай подробный план урока по теме "[ВАША ТЕМА]" для учащихся [КЛАСС] класса.
+
+📖 КОНТЕКСТ:
+- Продолжительность урока: 45 минут
+- Количество учеников: 25 человек
+- Технические возможности: проектор, компьютер у учителя, смартфоны у учеников
+- Предварительные знания: [ОПИШИТЕ]
+
+🎯 ЦЕЛИ УРОКА:
+1. Образовательная: [что должны узнать]
+2. Развивающая: [какие навыки развить]
+3. Воспитательная: [какие ценности формировать]
+
+📋 СТРУКТУРА УРОКА:
+
+1. ОРГАНИЗАЦИОННЫЙ МОМЕНТ (2 мин)
+   - Приветствие
+   - Проверка готовности
+   - Мотивация через проблемный вопрос
+
+2. АКТУАЛИЗАЦИЯ ЗНАНИЙ (5 мин)
+   - Интерактивная викторина (5 вопросов)
+   - Обсуждение результатов
+
+3. ИЗУЧЕНИЕ НОВОГО МАТЕРИАЛА (15 мин)
+   - Краткая лекция с визуальной поддержкой
+   - Работа с интерактивной схемой/таблицей
+   - Примеры из реальной жизни
+
+4. ПРАКТИЧЕСКАЯ РАБОТА (15 мин)
+   - Групповое задание (4 группы по 6 человек)
+   - Каждая группа получает свой кейс
+   - Презентация результатов (по 2 мин на группу)
+
+5. РЕФЛЕКСИЯ (5 мин)
+   - Метод "Незаконченное предложение"
+   - Оценка собственного понимания темы (1-10)
+
+6. ДОМАШНЕЕ ЗАДАНИЕ (3 мин)
+   - Базовый уровень (для всех)
+   - Продвинутый уровень (по желанию)
+   - Творческое задание (на выбор)
+
+🛠️ ИНТЕРАКТИВНЫЕ ЭЛЕМЕНТЫ:
+Создай работающие HTML-компоненты:
+- Викторина с автоматической проверкой
+- Интерактивная таблица/схема
+- Таймер для групповой работы
+- Форма для рефлексии
+
+💡 ДИФФЕРЕНЦИАЦИЯ:
+- Для успевающих: дополнительные вопросы со звёздочкой
+- Для испытывающих трудности: карточки-подсказки
+- Для визуалов: схемы и инфографика
+- Для кинестетиков: практические манипуляции
+
+📊 КРИТЕРИИ ОЦЕНКИ:
+- "5" — 90-100% правильных ответов
+- "4" — 75-89%
+- "3" — 50-74%
+- "2" — менее 50%
+
+🎁 БОНУС: "Вау-момент"
+Придумай неожиданный факт или демонстрацию, которая запомнится ученикам надолго.</pre>
+                    <button class="copy-btn" onclick="copyToClipboard(this.parentElement.querySelector('pre').textContent, this)">📋 Скопировать весь шаблон</button>
+                </div>
+            </div>
+
+            <!-- Задание для групп -->
+            <div class="card">
+                <h2 class="card-title">👥 Задание для групповой работы</h2>
+                <p style="color: var(--text-light); margin-bottom: 1.5rem;">Практикум по созданию промптов для вашего предмета</p>
+                
+                <ul class="checklist">
+                    <li>
+                        <span><strong>Шаг 1:</strong> Объединитесь в группы по предметам (2-3 человека)</span>
+                    </li>
+                    <li>
+                        <span><strong>Шаг 2:</strong> Выберите тему из вашей рабочей программы</span>
+                    </li>
+                    <li>
+                        <span><strong>Шаг 3:</strong> Используя конструктор, создайте промпт для этой темы</span>
+                    </li>
+                    <li>
+                        <span><strong>Шаг 4:</strong> Протестируйте промпт в Qwen, при необходимости доработайте</span>
+                    </li>
+                </ul>
+
+                <button class="btn btn-accent" onclick="showRandomExample()" style="margin-top: 1.5rem;">
+                    🎲 Сгенерировать случайный пример
+                </button>
+            </div>
+
+            <!-- Финальный блок -->
+            <div class="banner banner-success">
+                <h2 style="margin-bottom: 1rem;">🎉 Поздравляем!</h2>
+                <p style="font-size: 1.1rem; margin-bottom: 1rem;">Вы прошли все 4 этапа мастер-класса по использованию Qwen в работе учителя!</p>
+                <p><strong>Что дальше?</strong></p>
+                <ul style="margin-top: 0.5rem;">
+                    <li>Сохраните понравившиеся промпты в свою библиотеку</li>
+                    <li>Поделитесь опытом с коллегами</li>
+                    <li>Экспериментируйте и создавайте свои шаблоны</li>
+                    <li>Возвращайтесь к материалам при необходимости</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <!-- НАВИГАЦИЯ -->
+    <div class="navigation" style="max-width: 1200px; margin: 0 auto; padding: 0 1rem;">
+        <button class="btn btn-secondary" id="prevBtn" disabled>← Назад</button>
+        <button class="btn btn-primary" id="nextBtn">Далее →</button>
+    </div>
+
+    <!-- ФУТЕР -->
+    <footer>
+        <p>Материал для мастер-класса • Создано с помощью Qwen</p>
+    </footer>
+
+    <!-- МОДАЛЬНОЕ ОКНО -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal()">×</button>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <!-- ТОАСТ УВЕДОМЛЕНИЕ -->
+    <div class="toast" id="toast">✓ Скопировано!</div>
+
+    <script>
+        // ============================================
+        // СОСТОЯНИЕ ПРИЛОЖЕНИЯ
+        // ============================================
+        let currentStage = 1;
+        const totalStages = 4;
+
+        // ============================================
+        // НАВИГАЦИЯ
+        // ============================================
+        function updateNavigation() {
+            // Обновляем индикатор этапа
+            document.getElementById('stageIndicator').textContent = `Этап ${currentStage} из ${totalStages}`;
+            
+            // Обновляем прогресс-бар
+            for (let i = 1; i <= totalStages; i++) {
+                const step = document.getElementById(`progress${i}`);
+                step.classList.remove('active', 'completed');
+                if (i === currentStage) {
+                    step.classList.add('active');
+                } else if (i < currentStage) {
+                    step.classList.add('completed');
+                }
+            }
+
+            // Обновляем видимость этапов
+            document.querySelectorAll('.stage').forEach((stage, index) => {
+                stage.classList.remove('active');
+                if (index + 1 === currentStage) {
+                    stage.classList.add('active');
+                }
+            });
+
+            // Обновляем кнопки навигации
+            document.getElementById('prevBtn').disabled = currentStage === 1;
+            document.getElementById('nextBtn').textContent = currentStage === totalStages ? 'Завершить' : 'Далее →';
+            
+            // Прокрутка наверх
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        document.getElementById('prevBtn').addEventListener('click', () => {
+            if (currentStage > 1) {
+                currentStage--;
+                updateNavigation();
+            }
+        });
+
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            if (currentStage < totalStages) {
+                currentStage++;
+                updateNavigation();
+            } else {
+                showToast('🎉 Поздравляем! Мастер-класс завершён!');
+            }
+        });
+
+        // ============================================
+        // ФУНКЦИЯ КОПИРОВАНИЯ
+        // ============================================
+        async function copyToClipboard(text, button) {
+            try {
+                await navigator.clipboard.writeText(text);
+                
+                if (button) {
+                    const originalText = button.innerHTML;
+                    button.innerHTML = '✓ Скопировано!';
+                    button.classList.add('copied');
+                    
+                    setTimeout(() => {
+                        button.innerHTML = originalText;
+                        button.classList.remove('copied');
+                    }, 1500);
+                }
+                
+                showToast('✓ Скопировано!');
+            } catch (err) {
+                showToast('❌ Ошибка копирования');
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        // ============================================
+        // АККОРДЕОНЫ
+        // ============================================
+        function initAccordions() {
+            document.querySelectorAll('.accordion-header').forEach(header => {
+                header.addEventListener('click', () => {
+                    header.classList.toggle('active');
+                    const content = header.nextElementSibling;
+                    content.classList.toggle('open');
+                });
+            });
+        }
+
+        // ============================================
+        // МОДАЛЬНОЕ ОКНО
+        // ============================================
+        function openModal(content) {
+            document.getElementById('modalContent').innerHTML = content;
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        function openModalPrompt(promptText) {
+            const content = `
+                <h3 style="color: var(--primary); margin-bottom: 1rem;">📋 Готовый промпт</h3>
+                <div class="code-block" style="margin: 0;">
+                    <pre style="white-space: pre-wrap;">${promptText}</pre>
+                    <button class="copy-btn" onclick="copyToClipboard(\`${promptText.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`, this)">📋 Копировать</button>
+                </div>
+                <p style="margin-top: 1rem; color: var(--text-light);">Скопируйте этот промпт и вставьте его в Qwen</p>
+            `;
+            openModal(content);
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+        }
+
+        document.getElementById('modalOverlay').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) {
+                closeModal();
+            }
+        });
+
+        // Клавиша Escape закрывает модальное окно
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // ============================================
+        // КОНСТРУКТОР ПРОМПТОВ
+        // ============================================
+        function generatePrompt() {
+            const role = document.getElementById('promptRole')?.value || '';
+            const task = document.getElementById('promptTask')?.value || '';
+            const context = document.getElementById('promptContext')?.value || '';
+            const format = document.getElementById('promptFormat')?.value || '';
+            const constraints = document.getElementById('promptConstraints')?.value || '';
+
+            const parts = [];
+            if (role) parts.push(`Роль: ${role}`);
+            if (task) parts.push(`Задача: ${task}`);
+            if (context) parts.push(`Контекст: ${context}`);
+            if (format) parts.push(`Формат: ${format}`);
+            if (constraints) parts.push(`Ограничения: ${constraints}`);
+
+            return parts.join('\n\n');
+        }
+
+        function updateGeneratedPrompt() {
+            const prompt = generatePrompt();
+            const output = document.getElementById('generatedPromptOutput');
+            if (output) {
+                output.textContent = prompt || 'Заполните поля выше, чтобы получить готовый промпт';
+            }
+        }
+
+        // ============================================
+        // СЛУЧАЙНЫЙ ПРИМЕР
+        // ============================================
+        const examplePrompts = [
+            {
+                subject: 'Литература',
+                grade: '8 класс',
+                topic: 'Тургенев «Муму»',
+                prompt: 'Создай викторину по рассказу "Муму" Тургенева. 10 вопросов с вариантами ответов. Включи вопросы на понимание сюжета и анализ характеров.'
+            },
+            {
+                subject: 'Математика',
+                grade: '5 класс',
+                topic: 'Дроби',
+                prompt: 'Разработай 5 практических задач на сложение дробей с одинаковыми знаменателями. Добавь визуальные подсказки и пошаговые решения.'
+            },
+            {
+                subject: 'География',
+                grade: '7 класс',
+                topic: 'Климатические пояса',
+                prompt: 'Создай интерактивную таблицу сравнения климатических поясов Земли. Включи температуру, осадки, характерную растительность и животный мир.'
+            },
+            {
+                subject: 'Биология',
+                grade: '9 класс',
+                topic: 'Строение клетки',
+                prompt: 'Разработай карточки для запоминания органоидов клетки. Для каждого органоида укажи название, функцию и аналогию из повседневной жизни.'
+            }
+        ];
+
+        function showRandomExample() {
+            const random = examplePrompts[Math.floor(Math.random() * examplePrompts.length)];
+            const content = `
+                <h3 style="color: var(--primary); margin-bottom: 1rem;">📚 ${random.subject} — ${random.grade}</h3>
+                <p><strong>Тема:</strong> ${random.topic}</p>
+                <div class="code-block" style="margin-top: 1rem;">
+                    <pre style="white-space: pre-wrap;">${random.prompt}</pre>
+                    <button class="copy-btn" onclick="copyToClipboard(\`${random.prompt.replace(/`/g, '\\`')}\`, this)">📋 Копировать</button>
+                </div>
+            `;
+            openModal(content);
+        }
+
+        // ============================================
+        // ИНИЦИАЛИЗАЦИЯ
+        // ============================================
+        document.addEventListener('DOMContentLoaded', () => {
+            initAccordions();
+            updateNavigation();
+            
+            // Добавляем обработчики для полей конструктора промптов
+            document.querySelectorAll('.prompt-field input, .prompt-field textarea, .prompt-field select').forEach(field => {
+                field.addEventListener('input', updateGeneratedPrompt);
+            });
+        });
+    </script>
+</body>
+</html>
