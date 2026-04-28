@@ -17,6 +17,7 @@ const libraryPrompts = [
 ];
 
 function renderStage() {
+  if (!stageIndicator || !progressFill || !prevBtn || !nextBtn) return;
   stages.forEach((stage, index) => {
     stage.classList.toggle("active", index === currentStage);
   });
@@ -41,18 +42,19 @@ function goToStage(stageIndex) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-prevBtn.addEventListener("click", () => goToStage(currentStage - 1));
-nextBtn.addEventListener("click", () => goToStage(currentStage + 1));
+prevBtn?.addEventListener("click", () => goToStage(currentStage - 1));
+nextBtn?.addEventListener("click", () => goToStage(currentStage + 1));
 
 stageDots.forEach((dot) => {
   dot.addEventListener("click", () => {
     goToStage(Number(dot.dataset.step));
-    stageNav.classList.remove("open");
+    stageNav?.classList.remove("open");
     menuToggle?.setAttribute("aria-expanded", "false");
   });
 });
 
 menuToggle?.addEventListener("click", () => {
+  if (!stageNav) return;
   const isOpen = stageNav.classList.toggle("open");
   menuToggle.setAttribute("aria-expanded", String(isOpen));
 });
