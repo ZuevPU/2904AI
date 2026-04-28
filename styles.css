@@ -314,6 +314,49 @@ th {
   gap: 10px;
 }
 
+.prompt-builder-v2 {
+  display: grid;
+  gap: 14px;
+}
+
+.builder-section {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid #dbeafe;
+  border-radius: 12px;
+  background: #f8fbff;
+}
+
+.builder-section h5 {
+  margin: 0;
+  color: #1e40af;
+  font-size: 1rem;
+}
+
+.builder-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.builder-option {
+  font-size: 0.9rem;
+  padding: 8px 12px;
+  border-radius: 999px;
+}
+
+.builder-option.active {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+  color: #fff;
+}
+
+.prompt-builder-v2 .builder-section input[type="text"] {
+  width: 100%;
+  box-sizing: border-box;
+}
+
 .embed-wrap {
   margin-top: 10px;
   border: 1px solid #cbd5e1;

@@ -105,8 +105,10 @@ const builderInputs = [
   document.getElementById("constraintsInput")
 ];
 const generatedPrompt = document.getElementById("generatedPrompt");
+const builderOptionButtons = Array.from(document.querySelectorAll(".builder-option"));
 
 function updatePromptBuilder() {
+  if (!generatedPrompt) return;
   const values = builderInputs.map((input) => input.value.trim());
   const hasValue = values.some(Boolean);
   if (!hasValue) {
@@ -121,8 +123,35 @@ function updatePromptBuilder() {
 }
 
 builderInputs.forEach((input) => {
+  if (!input) return;
   input.addEventListener("input", updatePromptBuilder);
+  input.addEventListener("input", () => {
+    const section = input.closest(".builder-section");
+    if (!section) return;
+    section.querySelectorAll(".builder-option.active").forEach((button) => {
+      button.classList.remove("active");
+    });
+  });
 });
+
+if (builderOptionButtons.length > 0) {
+  builderOptionButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const targetId = button.dataset.builderTarget;
+      if (!targetId) return;
+      const targetInput = document.getElementById(targetId);
+      if (!targetInput) return;
+
+      const section = button.closest(".builder-section");
+      if (section) {
+        section.querySelectorAll(".builder-option").forEach((item) => item.classList.remove("active"));
+      }
+      button.classList.add("active");
+      targetInput.value = button.textContent.trim();
+      updatePromptBuilder();
+    });
+  });
+}
 
 const randomPromptBtn = document.getElementById("randomPromptBtn");
 const randomPromptOutput = document.getElementById("randomPromptOutput");
@@ -134,6 +163,7 @@ const stage3FullscreenBtn = document.getElementById("stage3FullscreenBtn");
 const stage3PromptFrame = document.getElementById("stage3PromptFrame");
 const stage4FullscreenBtn = document.getElementById("stage4FullscreenBtn");
 const stage4PromptFrame = document.getElementById("stage4PromptFrame");
+const levelFullscreenButtons = Array.from(document.querySelectorAll(".level-fullscreen-btn"));
 const s4BuildBtn = document.getElementById("s4BuildBtn");
 const s4ClearBtn = document.getElementById("s4ClearBtn");
 const s4PromptOutput = document.getElementById("s4PromptOutput");
@@ -147,10 +177,12 @@ const s4Description = document.getElementById("s4Description");
 const artifactChips = Array.from(document.querySelectorAll(".artifact-chip"));
 const s4TechniqueCheckboxes = Array.from(document.querySelectorAll(".s4Technique"));
 
-randomPromptBtn.addEventListener("click", () => {
-  const randomItem = libraryPrompts[Math.floor(Math.random() * libraryPrompts.length)];
-  randomPromptOutput.textContent = randomItem;
-});
+if (randomPromptBtn && randomPromptOutput) {
+  randomPromptBtn.addEventListener("click", () => {
+    const randomItem = libraryPrompts[Math.floor(Math.random() * libraryPrompts.length)];
+    randomPromptOutput.textContent = randomItem;
+  });
+}
 
 function showLevel(levelId) {
   levelTabs.forEach((tab) => {
@@ -172,51 +204,49 @@ levelTabs.forEach((tab) => {
   });
 });
 
-stage1FullscreenBtn?.addEventListener("click", async () => {
-  if (!stage1PromptFrame) return;
+async function toggleFullscreen(targetElement) {
+  if (!targetElement) return;
   try {
     if (document.fullscreenElement) {
       await document.exitFullscreen();
       return;
     }
-    await stage1PromptFrame.requestFullscreen();
+    await targetElement.requestFullscreen();
   } catch (error) {
     console.error("Fullscreen error:", error);
   }
+}
+
+stage1FullscreenBtn?.addEventListener("click", async () => {
+  await toggleFullscreen(stage1PromptFrame);
 });
 
 stage3FullscreenBtn?.addEventListener("click", async () => {
-  if (!stage3PromptFrame) return;
-  try {
-    if (document.fullscreenElement) {
-      await document.exitFullscreen();
-      return;
-    }
-    await stage3PromptFrame.requestFullscreen();
-  } catch (error) {
-    console.error("Fullscreen error:", error);
-  }
+  await toggleFullscreen(stage3PromptFrame);
 });
 
 stage4FullscreenBtn?.addEventListener("click", async () => {
-  if (!stage4PromptFrame) return;
-  try {
-    if (document.fullscreenElement) {
-      await document.exitFullscreen();
-      return;
-    }
-    await stage4PromptFrame.requestFullscreen();
-  } catch (error) {
-    console.error("Fullscreen error:", error);
-  }
+  await toggleFullscreen(stage4PromptFrame);
 });
 
-artifactChips.forEach((chip) => {
-  chip.addEventListener("click", () => {
-    artifactChips.forEach((item) => item.classList.remove("active"));
-    chip.classList.add("active");
+if (levelFullscreenButtons.length > 0) {
+  levelFullscreenButtons.forEach((button) => {
+    button.addEventListener("click", async () => {
+      const frameId = button.dataset.fullscreenTarget;
+      const frame = frameId ? document.getElementById(frameId) : null;
+      await toggleFullscreen(frame);
+    });
   });
-});
+}
+
+if (artifactChips.length > 0) {
+  artifactChips.forEach((chip) => {
+    chip.addEventListener("click", () => {
+      artifactChips.forEach((item) => item.classList.remove("active"));
+      chip.classList.add("active");
+    });
+  });
+}
 
 function buildStage4Prompt() {
   const role = s4Role?.value.trim() || "Ты — профессиональный методист и педагог-дизайнер с опытом создания современных уроков.";
@@ -311,19 +341,33 @@ ${techniquesBlock}
 Не предлагай интерактив ради интерактива. Каждый элемент должен работать на цель урока и учитывать разнообразие учеников.`;
 }
 
-s4BuildBtn?.addEventListener("click", () => {
-  s4PromptOutput.textContent = buildStage4Prompt();
-});
+const hasStage4Builder =
+  s4BuildBtn &&
+  s4ClearBtn &&
+  s4PromptOutput &&
+  s4Role &&
+  s4Subject &&
+  s4Class &&
+  s4Topic &&
+  s4Duration &&
+  s4Equipment &&
+  s4Description;
 
-s4ClearBtn?.addEventListener("click", () => {
-  [s4Role, s4Subject, s4Class, s4Topic, s4Duration, s4Equipment, s4Description].forEach((input) => {
-    if (input) input.value = "";
+if (hasStage4Builder) {
+  s4BuildBtn.addEventListener("click", () => {
+    s4PromptOutput.textContent = buildStage4Prompt();
   });
-  s4TechniqueCheckboxes.forEach((item, idx) => {
-    item.checked = idx < 4;
+
+  s4ClearBtn.addEventListener("click", () => {
+    [s4Role, s4Subject, s4Class, s4Topic, s4Duration, s4Equipment, s4Description].forEach((input) => {
+      input.value = "";
+    });
+    s4TechniqueCheckboxes.forEach((item, idx) => {
+      item.checked = idx < 4;
+    });
+    artifactChips.forEach((chip, idx) => chip.classList.toggle("active", idx === 0));
+    s4PromptOutput.textContent = "Заполните параметры и нажмите «Собрать промпт».";
   });
-  artifactChips.forEach((chip, idx) => chip.classList.toggle("active", idx === 0));
-  s4PromptOutput.textContent = "Заполните параметры и нажмите «Собрать промпт».";
-});
+}
 
 renderStage();
